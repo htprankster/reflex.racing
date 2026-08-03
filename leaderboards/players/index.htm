@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <meta id="auto_refresh" http-equiv="refresh_disabled" content="1200"> -->
+        <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="../../bin/core/fonts.css">
+        <link rel="stylesheet" href="../../bin/core/style.css">
+        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
+        <script src="../../bin/core/collection.js"></script>
+        <script src="../../bin/core/leaderboards.js"></script>
+        <script src="../../bin/core/content.js"></script>
+        <title id="page_title">Reflex Racing > Players</title>
+    </head>
+    <body style="cursor:default">
+        <div id="background" class="bg-pattern"></div>
+        <div id="header">
+            <a id="logo" class="logo-header" href="../"></a>
+            <div id="shortcuts">
+                <span class="toggle-svg"><input id="info_panel_settings_darkmode" type="checkbox" onchange="changeStyleCSS(this)" title="Toggle dark mode" checked/><label id="info_panel_settings_darkmode_label"></label></span>
+                <span class="toggle-svg"><input id="info_panel_settings_nsfw" type="checkbox" onchange="changeExplicitContent(this)" title="Toggle explicit content"/><label id="info_panel_settings_nsfw_label"></label></span>
+                <span class="toggle-svg"><input id="info_panel_settings_autorefresh" type="checkbox" onchange="changeAutoRefresh(this)" title="Toggle auto-refresh"/><label id="info_panel_settings_autorefresh_label"></label></span>
+            </div>
+            <div id="menu" class="rc-info-panels svg-info-large"></div>
+        </div>
+        <div id="display_player">
+            <div id="player_preview" class="rc-info-panels svg-info-large hide-dom">
+                <div class="rc-info-panel">
+                    <div class="info-panel-card">
+                        <span id="player_preview_title" class="player-preview-title"></span>
+                        <img id="player_avatar" class="player-preview" src="../../static/images/loading.gif" onerror="this.style.visibility='hidden'"/>
+                        <img id="player_avatar_focus" class="player-preview-focus" src="" onerror="this.style.visibility='hidden'"/>
+                        <a id="steam_profile_link" href="" title="Steam Profile" target="_blank"><img id="steam_profile_logo" class="player-preview-steam" src="../../static/images/steam-logo.png"></a>
+                    </div>
+                </div>
+            </div>
+            <div id="player_details" class="rc-info-panels svg-info-xlarge hide-dom">
+                <div class="rc-info-panel" style="width:100%">
+                    <div class="info-panel-card">
+                        <ul class="info-panel-4stat-details">
+                            <li><span id="info_panel_player_details_globalrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Global Rank</span></li>
+                            <li><span id="info_panel_player_details_avgrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Average Rank</span></li>
+                            <li><span id="info_panel_player_details_wrs" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">World Records</span></li>
+                            <li><span id="info_panel_player_details_records" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Records</span></li>
+                            <li><span id="info_panel_player_details_country" class="info-panel-details svg-info-xlarge">Loading</span><span id="info_panel_player_details_country_label" class="info-panel-title">Country</span></li>
+                            <li class="hide-dom"><span id="info_panel_player_details_mapscreated" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Maps created</span></li>
+                            <li><span id="info_panel_player_details_fav" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Racing preference</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="player_showcase" class="rc-info-panels svg-info-large hide-dom">
+                <div class="rc-info-panel" style="width:100%">
+                    <div class="info-panel-card info-panel-scroll-header">
+                        <span id="player_showcase_title" class="info-panel-title">SHOWCASE</span>
+                    </div>
+                    <div class="info-panel-window-header">
+                        <div onclick="changeShowcaseView(this,'showcase_top_racers')" class="selected"><span class="info-panel-title">Highest score</span></div>
+                        <div onclick="changeShowcaseView(this,'showcase_most_records')"><span class="info-panel-title">Most records</span></div>
+                        <div onclick="changeShowcaseView(this,'showcase_top_challengers')"><span class="info-panel-title">Challengers</span></div>
+                    </div>
+                    <div class="info-panel-window-content">
+                        <div id="showcase_top_racers" class="info-panel-card">
+                            <ul class="info-panel-3stat-details">
+                                <li><span id="info_panel_topracers_1place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span><span class="info-panel-title">1st place</span></li>
+                                <li><span id="info_panel_topracers_2place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span><span class="info-panel-title">2nd place</span></li>
+                                <li><span id="info_panel_topracers_3place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span><span class="info-panel-title">3rd place</span></li>
+                                <li><span id="info_panel_topracers_4place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span><span class="info-panel-title">4th place</span></li>
+                                <li><span id="info_panel_topracers_5place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span><span class="info-panel-title">5th place</span></li>
+                            </ul>
+                        </div>
+                        <div id="showcase_most_records" class="info-panel-card hide-dom">
+                            <ul class="info-panel-3stat-details">
+                                <li><span id="info_panel_mostrecords_1place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostrecords_2place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostrecords_3place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostrecords_4place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostrecords_5place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                            </ul>
+                        </div>
+                        <div id="showcase_top_challengers" class="info-panel-card hide-dom">
+                            <ul class="info-panel-3stat-details">
+                                <li><span id="info_panel_topchallengers_1place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_topchallengers_2place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_topchallengers_3place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_topchallengers_4place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_topchallengers_5place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="wrapper_cmaps" class="rc-info-panels svg-info-large hide-dom">
+                <div class="rc-info-panel">
+                    <div id="info_panel_cmaps_header" class="info-panel-card info-panel-scroll-header">
+                        <span id="info_panel_cmaps_title" class="info-panel-title">MAPS CREATED</span>
+                    </div>
+                    <table id="panel_cmaps" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
+                </div>
+            </div>
+            <div id="wrapper_records" class="rc-info-panels svg-info-large">
+                <div class="rc-info-panel">
+                    <div id="info_panel_ldb_header" class="info-panel-card info-panel-scroll-header">
+                        <span id="info_panel_ldb_title" class="info-panel-title">LEADERBOARDS</span>
+                    </div>
+                    <table id="panel_records" class="rc-leaderboards" cellspacing="0" cellpadding="0" onchange="this.scrollTop = 0"></table>
+                </div>
+            </div>
+        </div>
+        <div id="footer" class="svg-info-xlarge"></div>
+        <script>
+            initIDB();
+            initCheckbox('info_panel_settings_darkmode', lsiTheme, 'dark');
+            initCheckbox('info_panel_settings_nsfw', lsiNSFW, '1');
+            initCheckbox('info_panel_settings_autorefresh', lsiAutoRefresh, '1');
+            changeStyleCSS();
+            changeExplicitContent();
+            changeAutoRefresh();
+            document.getElementById('footer').innerHTML = footerLinks;
+            document.getElementById('player_avatar').style = 'width:auto;justify-self:center;';
+            document.getElementById('panel_records').innerHTML = LOADING_GIF_L2;
+            document.getElementById('menu').innerHTML = pageHeader();
+            const playerId = getKeyLDB(window.location.search.substr(1));
+            async function main() {
+                const rawMaps = await getIDBDataset(idbKeyMaps);
+                const rawPlayers = await getIDBDataset(idbKeyPlayers);
+                const rawRecords = await getIDBDataset(idbKeyRecords);
+
+                const fnMaps = new Maps(rawMaps);
+                const fnPlayers = new Players(rawPlayers);
+                const directoryLevels = 1;
+
+                if(playerId) {
+                    const rawActivity = await getIDBDataset(idbKeyActivity)
+                    const rawMetadata = await getIDBDataset(idbKeyMetadata);
+
+                    const rawAlpha2Countries = await fetchDATA('https://raw.githubusercontent.com/stefangabos/world_countries/refs/heads/master/data/countries/en/world.json');
+                    const fnRecords = new Records(rawRecords);
+                    const playerObj = fnPlayers.getEntryById(playerId);
+                    const recordsObj = fnRecords.getByPlayer(playerId);
+
+                    document.getElementById('player_preview').classList.remove(hideDomClass);
+                    document.getElementById('player_details').classList.remove(hideDomClass);
+
+                    const playerName = (playerObj.name || '[deleted]');
+                    const playerNameSafe = (playerObj.censored_name || '[deleted]');
+                    document.getElementById('page_title').innerHTML += ' > '+filterExplicitContent(playerName, playerNameSafe, true).str;
+                    document.getElementById('steam_profile_link').href = 'https://steamcommunity.com/profiles/'+playerId;
+
+                    document.getElementById('player_preview_title').innerHTML = filterExplicitContent(playerName, playerNameSafe).span;
+                    if(playerObj.avatar !== 'null') {
+                        document.getElementById('player_avatar').src = playerObj.avatar;
+                        document.getElementById('player_avatar').style = 'visibility: visible !important';
+                        document.getElementById('player_avatar_focus').src = playerObj.avatar;
+                        document.getElementById('player_avatar_focus').style = 'visibility: visible !important';
+                    }
+                    const countryName = getCountryName(rawAlpha2Countries, playerObj.country)
+                    document.getElementById('info_panel_player_details_globalrank').innerHTML = playerObj.globalrank;
+                    document.getElementById('info_panel_player_details_avgrank').innerHTML = playerObj.avgrank;
+                    document.getElementById('info_panel_player_details_wrs').innerHTML = playerObj.wrs;
+                    document.getElementById('info_panel_player_details_records').innerHTML = playerObj.records;
+                    document.getElementById('info_panel_player_details_country').innerHTML = formatCountryFlag(playerObj.country, countryName);
+                    document.getElementById('info_panel_player_details_country_label').innerHTML = countryName;
+
+                    const mapsCreated = fnMaps.getByPlayer(playerId);
+                    if(mapsCreated.length > 0) {
+                        document.getElementById('info_panel_cmaps_title').innerHTML = SVG_MAP+' MAPS CREATED<br>'+LABEL_LEGACY_VERSION;
+                        document.getElementById('wrapper_cmaps').classList.remove(hideDomClass);
+                        document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(mapsCreated[Math.floor(Math.random() * mapsCreated.length)].id || 0));
+                        document.getElementById('info_panel_player_details_mapscreated').innerHTML = mapsCreated.length;
+                        document.getElementById('info_panel_player_details_mapscreated').parentNode.classList.remove(hideDomClass);
+                        generateTableLDB({maps: mapsCreated, players: rawPlayers, records: rawRecords}, 'panel_cmaps', 'map', 'mapper', directoryLevels);
+                        window.addEventListener('load', adjustLDBHeaderOffset('info_panel_cmaps_header', 'panel_cmaps_thead'));
+                    }
+                    else if(recordsObj.length > 0) {
+                        document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(recordsObj[Math.floor(Math.random() * recordsObj.length)].map_id));
+                    }
+
+                    document.getElementById('info_panel_player_details_fav').innerHTML = formatFavouriteMapType(playerObj.fav, playerObj.records);
+
+                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' RECORDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' RECORDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                    generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'player', playerId, directoryLevels);
+                }
+                else {
+                    document.getElementById('player_showcase').classList.remove(hideDomClass);
+                    document.getElementById('player_showcase_title').innerHTML = SVG_STAR+' SHOWCASE';
+                    document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
+                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_LEADERBOARDS+' LEADERBOARDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_LEADERBOARDS+' LEADERBOARDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                    generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords}, 'panel_records', 'player', 'all', directoryLevels);
+                    showTopRacers(rawPlayers);
+                    showMostRecords(rawPlayers)
+                    showTopChallengers(rawPlayers, rawMaps, rawRecords);
+                }
+                window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_header', 'panel_records_thead'));
+            }
+
+            async function showTopRacers(rawPlayersObj) {
+                const fnPlayers = new Players(rawPlayersObj);
+                const topRacers = fnPlayers.getAll().slice(0,5);
+                for(let i = 0; i < topRacers.length; i++) {
+                    let domTR = document.getElementById('info_panel_topracers_'+(i+1)+'place');
+                    if(domTR) {
+                        domTR.innerHTML = '<a href="'+getHrefPlayer(topRacers[i].id, 1)+'"><img class="player-mid-preview" src="'+topRacers[i].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+filterExplicitContent(topRacers[i].name, topRacers[i].censored_name, true, 20).span+'</a>';
+                    }
+                }
+                return;
+            }
+
+            async function showMostRecords(rawPlayersObj) {
+                const fnPlayers = new Players(rawPlayersObj);
+                const players = fnPlayers.getAll(false);
+                const sortedPlayers = players.sort((a,b) => a.records - b.records).reverse().slice(0,5);
+                for(let i = 0; i < sortedPlayers.length; i++) {
+                    let domMR = document.getElementById('info_panel_mostrecords_'+(i+1)+'place');
+                    if(domMR) {
+                        domMR.innerHTML = '<a href="'+getHrefPlayer(sortedPlayers[i].id, 1)+'"><img class="player-mid-preview" src="'+sortedPlayers[i].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+filterExplicitContent(sortedPlayers[i].name, sortedPlayers[i].censored_name, true, 20).span+'</a>';
+                        domMR.parentNode.innerHTML += '<span class="info-panel-title">'+sortedPlayers[i].records+' records</span>';
+                    }
+                }
+                return;
+            }
+
+            async function showTopChallengers(rawPlayersObj, rawMapsObj, rawRecordsObj) {
+                const fnPlayers = new Players(rawPlayersObj);
+                const fnMaps = new Maps(rawMapsObj);
+                const fnRecords = new Records(rawRecordsObj);
+                const maps = fnMaps.getAll();
+                let topChallengers = new Array();
+                for(let i = 0; i < maps.length; i++) {
+                    if(maps[i].custom.difficulty.charAt(0) == '7') {
+                        const records = fnRecords.getByMap(maps[i].id);
+                        for(let j = 0; j < records.length; j++) {
+                            let newPlayer = true;
+                            for(let k = 0; k < topChallengers.length; k++) {
+                                if(topChallengers[k].player_id === records[j].player_id) {
+                                    topChallengers[k].challengeScore += Math.floor((records.length/parseInt(records[j].rank))*7);
+                                    newPlayer = false;
+                                    break;
+                                }
+                            }
+
+                            if(newPlayer) {
+                                const player = fnPlayers.getEntryById(records[j].player_id);
+                                topChallengers.push({player_id: records[j].player_id, name: player.name, censored_name: player.censored_name, avatar: player.avatar, challengeScore: 0});
+                            }
+                        }
+                    }
+                }
+
+                const sortedPlayers = topChallengers.sort((a,b) => a.challengeScore - b.challengeScore).reverse().slice(0,5);
+                for(let c = 0; c < sortedPlayers.length; c++) {
+                    let domTC = document.getElementById('info_panel_topchallengers_'+(c+1)+'place');
+                    if(domTC) {
+                        domTC.innerHTML = '<a href="'+getHrefPlayer(sortedPlayers[c].player_id, 1)+'"><img class="player-mid-preview" src="'+sortedPlayers[c].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+filterExplicitContent(sortedPlayers[c].name, sortedPlayers[c].censored_name, true, 20).span+'</a>';
+                        domTC.parentNode.innerHTML += '<span class="info-panel-title">'+sortedPlayers[c].challengeScore+' points</span>';
+                    }
+                }
+                return;
+            }
+
+            main();
+        </script>
+        <noscript>
+            <style>
+                .rc-header-panels,
+                .rc-slideshow,
+                .rc-info-panels,
+                a#logo,
+                #header,
+                #footer,
+                #wrapper_cmaps,
+                #wrapper_records,
+                #display_player,
+                #display_map,
+                #map_details {
+                    display: none;
+                }
+            </style>
+            <div id="logo" class="logo-header" style="place-self: center; margin: 4em;">
+                <span>reflex<br>racing</span>
+            </div>
+            <h1>Your browser does not support JavaScript!</h1>
+            <h2>Redirecting to /wiki...</h2>
+            <meta http-equiv="refresh" content="5;URL=/wiki/reflex-racing-wiki">
+        </noscript>
+    </body>
+</html>

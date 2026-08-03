@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <meta id="auto_refresh" http-equiv="refresh_disabled" content="1200"> -->
+        <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="../../bin/core/fonts.css">
+        <link rel="stylesheet" href="../../bin/core/style.css">
+        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
+        <script src="../../bin/core/collection.js"></script>
+        <script src="../../bin/core/leaderboards.js"></script>
+        <script src="../../bin/core/content.js"></script>
+        <title id="page_title">Reflex Racing > Maps</title>
+    </head>
+    <body style="cursor:default">
+        <div id="background" class="bg-pattern"></div>
+        <div id="header">
+            <a id="logo" class="logo-header" href="../"></a>
+            <div id="shortcuts">
+                <span class="toggle-svg"><input id="info_panel_settings_darkmode" type="checkbox" onchange="changeStyleCSS(this)" title="Toggle dark mode" checked/><label id="info_panel_settings_darkmode_label"></label></span>
+                <span class="toggle-svg"><input id="info_panel_settings_nsfw" type="checkbox" onchange="changeExplicitContent(this)" title="Toggle explicit content"/><label id="info_panel_settings_nsfw_label"></label></span>
+                <span class="toggle-svg"><input id="info_panel_settings_autorefresh" type="checkbox" onchange="changeAutoRefresh(this)" title="Toggle auto-refresh"/><label id="info_panel_settings_autorefresh_label"></label></span>
+            </div>
+            <div id="menu" class="rc-info-panels svg-info-large"></div>
+        </div>
+        <div id="display_map">
+            <div id="map_showcase" class="rc-info-panels svg-info-large hide-dom">
+                <div class="rc-info-panel" style="width:100%">
+                    <div class="info-panel-card info-panel-scroll-header">
+                        <span id="map_showcase_title" class="info-panel-title">SHOWCASE</span>
+                    </div>
+                    <div class="info-panel-window-header">
+                        <div onclick="changeShowcaseView(this,'showcase_popular_maps')" class="selected"><span class="info-panel-title">Popular maps</span></div>
+                        <div onclick="changeShowcaseView(this,'showcase_most_uploads')"><span class="info-panel-title">Most uploads</span></div>
+                    </div>
+                    <div class="info-panel-window-content">
+                        <div id="showcase_popular_maps" class="info-panel-card">
+                            <ul class="info-panel-3stat-details">
+                                <li><span id="info_panel_popularmaps_1place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_popularmaps_2place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_popularmaps_3place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_popularmaps_4place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_popularmaps_5place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                            </ul>
+                        </div>
+                        <div id="showcase_most_uploads" class="info-panel-card hide-dom">
+                            <ul class="info-panel-3stat-details">
+                                <li><span id="info_panel_mostuploads_1place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostuploads_2place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostuploads_3place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostuploads_4place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                                <li><span id="info_panel_mostuploads_5place" class="info-panel-details svg-info-xlarge" style="display:contents;">Loading</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="map_details" class="rc-info-panels svg-info-large">
+                <div class="rc-info-panel">
+                    <div class="info-panel-card">
+                        <span id="map_preview_title" class="map-preview-title"></span>
+                        <img id="map_preview" class="map-preview" src="../../static/images/loading.gif" onerror="this.style.visibility='hidden'"/>
+                        <a id="steam_workshop_link" href="" target="_blank"><img id="map_preview_steam" class="map-preview-steam" src="../../static/images/steam-logo.png"></a>
+                    </div>
+                </div>
+                <div class="rc-info-panel">
+                    <div class="info-panel-card info-panel-ldb-map">
+                        <span id="info_panel_details_title" class="info-panel-title"></span>
+                        <ul class="info-panel-row-details" style="display: contents;">
+                            <li><span class="info-panel-title">Records:</span><span id="info_panel_map_details_records" class="info-panel-details svg-info">Loading</span></li>
+                            <li><span class="info-panel-title">Type:</span><span id="info_panel_map_details_type" class="info-panel-details svg-info-large">Loading</span></li>
+                            <li><span class="info-panel-title">Difficulty:</span><span id="info_panel_map_details_difficulty" class="info-panel-details svg-info-large">Loading</span></li>
+                            <li><span class="info-panel-title">Published:</span><span id="info_panel_map_details_posted" class="info-panel-details svg-info">Loading</span></li>
+                            <li class="hide-dom"><span class="info-panel-title">Updated:</span><span id="info_panel_map_details_updated" class="info-panel-details svg-info">Loading</span></li>
+                            <li><span class="info-panel-title">Size:</span><span id="info_panel_map_details_filesize" class="info-panel-details svg-info">Loading</span></li>
+                            <li><span class="info-panel-title">Creator:</span><span id="info_panel_map_details_creator" class="info-panel-details svg-info">Loading</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="rc-info-panels svg-info-large">
+                <div class="rc-info-panel">
+                    <div id="info_panel_ldb_header" class="info-panel-card info-panel-scroll-header">
+                        <span id="info_panel_ldb_title" class="info-panel-title">LEADERBOARD</span>
+                    </div>
+                    <table id="panel_records" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
+                </div>
+            </div>
+        </div>
+        <div id="footer" class="svg-info-xlarge"></div>
+        <script>
+            initIDB();
+            initCheckbox('info_panel_settings_darkmode', lsiTheme, 'dark');
+            initCheckbox('info_panel_settings_nsfw', lsiNSFW, '1');
+            initCheckbox('info_panel_settings_autorefresh', lsiAutoRefresh, '1');
+            changeStyleCSS();
+            changeExplicitContent();
+            changeAutoRefresh();
+            document.getElementById('menu').innerHTML = pageHeader();
+            document.getElementById('map_preview').style = 'width:auto;justify-self:center;'
+            document.getElementById('panel_records').innerHTML = LOADING_GIF_L2;
+            document.getElementById('footer').innerHTML = footerLinks;
+            const mapId = getKeyLDB(window.location.search.substr(1));
+            async function main() {
+                const rawMaps = await getIDBDataset(idbKeyMaps);
+                const rawPlayers = await getIDBDataset(idbKeyPlayers);
+                const rawRecords = await getIDBDataset(idbKeyRecords);
+                const rawActivity = await getIDBDataset(idbKeyActivity);
+                const rawMetadata = await getIDBDataset(idbKeyMetadata);
+
+                const fnMaps = new Maps(rawMaps);
+                const fnPlayers = new Players(rawPlayers);
+                const fnRecords = new Records(rawRecords);
+                const fnMetadata = new Metadata(rawMetadata);
+
+                const maxRowsXPage = 300;
+                const directoryLevels = 1;
+
+                if(mapId) {
+                    const mapObj = fnMaps.getEntryById(mapId);
+                    if(mapObj.title) {
+                        const mapTitle = filterExplicitContent(mapObj.title, mapObj.censored_title);
+                        document.getElementById('page_title').innerHTML += ' > '+mapTitle.str;
+                        document.getElementById('background').innerHTML = getMapPreview(mapObj.preview_url);
+
+                        document.getElementById('map_preview').src = mapObj.preview_url;
+                        document.getElementById('map_preview').style = 'visibility: visible !important';
+                        document.getElementById('map_preview_title').innerHTML = mapTitle.span;
+                        document.getElementById('info_panel_details_title').innerHTML = SVG_INFO+' DETAILS'+'<br><span id="info_panel_map_details_lastcheck" title="Last check: '+fnMetadata.getLeaderboardsLastUpdate()+'" style="cursor:pointer" class="info-panel-details svg-info-small">'+SVG_ACTIVITY+' '+fnMetadata.getLeaderboardsLastUpdate('compact')+'</span>';
+                        document.getElementById('info_panel_map_details_records').innerHTML = fnRecords.getByMap(mapId).length;
+                        document.getElementById('info_panel_map_details_type').innerHTML = formatMapTypeLine(mapObj.custom.type);
+                        document.getElementById('info_panel_map_details_difficulty').innerHTML = formatMapDifficultyLine(mapObj.custom.difficulty);
+                        if(!isNaN(mapObj.creator)) {
+                            document.getElementById('info_panel_map_details_filesize').innerHTML = convertBytes(mapObj.file_size, false);
+                            document.getElementById('info_panel_map_details_posted').innerHTML = convertTime(mapObj.time_created, 'compact');
+                            document.getElementById('info_panel_map_details_posted').title = 'Published: '+convertTime(mapObj.time_created);
+                            document.getElementById('info_panel_map_details_posted').style.cursor = 'pointer';
+                            if(mapObj.time_created !== mapObj.time_updated) {
+                                document.getElementById('info_panel_map_details_updated').parentNode.classList.remove(hideDomClass);
+                                document.getElementById('info_panel_map_details_updated').innerHTML = convertTime(mapObj.time_updated, 'compact');
+                                document.getElementById('info_panel_map_details_updated').title = 'Last updated: '+convertTime(mapObj.time_updated);
+                                document.getElementById('info_panel_map_details_updated').style.cursor = 'pointer';
+                            }
+                            const mapper = fnPlayers.getNameById(mapObj.creator, true);
+                            if(mapper.str) {
+                                document.getElementById('info_panel_map_details_creator').innerHTML = '<a href="'+getHrefPlayer(mapObj.creator, 1)+'">'+mapper.span+' '+SVG_OPEN_LINK+'</a>';
+                            }
+                            else {
+                                document.getElementById('info_panel_map_details_creator').innerHTML = '[deleted]';
+                            }
+                        }
+                        document.getElementById('steam_workshop_link').href = 'http://steamcommunity.com/sharedfiles/filedetails/?id='+mapId;
+                        //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                        document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                        generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', mapId, directoryLevels, maxRowsXPage);
+                    }
+                }
+                else {
+                    document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
+                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS<br>'+BUTTON_TABLE_SHOW_MORE;
+                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                    document.getElementById('map_details').classList.add(hideDomClass);
+                    document.getElementById('map_showcase').classList.remove(hideDomClass);
+                    generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', 'all', directoryLevels, maxRowsXPage);
+                    showPopularMaps(rawRecords, rawMaps, rawPlayers);
+                    showMostUploads(rawMaps, rawPlayers);
+                }
+                window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_header', 'panel_records_thead'));
+            }
+
+            async function showPopularMaps(rawRecordsObj, rawMapsObj, rawPlayersObj) {
+                const fnMaps = new Maps(rawMapsObj);
+                const fnPlayers = new Players(rawPlayersObj);
+                const fnRecords = new Records(rawRecordsObj);
+
+                const mostPlayedMaps = fnRecords.mostPlayedMaps().slice(0, 5);
+                for(let i = 0; i < mostPlayedMaps.length; i++) {
+                    let domMP = document.getElementById('info_panel_popularmaps_'+(i+1)+'place');
+                    if(domMP) {
+                        const map = fnMaps.getEntryById(mostPlayedMaps[i].map_id);
+                        domMP.innerHTML = '<a href="'+getHrefMap(map.id, 1)+'"><img class="map-mid-preview" src="'+map.preview_url+'" onerror="this.style.visibility=\'hidden\'"/><span>'+filterExplicitContent(map.title, map.censored_title, true, 20).span+'</span></a>';
+                        domMP.parentNode.innerHTML += '<a href="'+getHrefPlayer(map.creator, 1)+'"><span class="info-panel-title">'+fnPlayers.getNameById(map.creator).span+'</span></a>';
+                    }
+                }
+                return;
+            }
+
+            async function showMostUploads(rawMapsObj, rawPlayersObj) {
+                const fnMaps = new Maps(rawMapsObj);
+                const fnPlayers = new Players(rawPlayersObj);
+
+                let players = fnPlayers.getAll(false);
+                const maps = fnMaps.getAll();
+                for(let i = 0; i < maps.length; i++) {
+                    for(let j = 0; j < players.length; j++) {
+                        if(!players[j].published) {
+                            players[j].published = 0;
+                        }
+
+                        if(players[j].id === maps[i].creator) {
+                            players[j].published++;
+                            break;
+                        }
+                    }
+                }
+
+                let mostUploads = players.sort((a,b) => a.published - b.published).reverse();
+                for(let m = 0; m < mostUploads.length; m++) {
+                    if(mostUploads[m].published > 0) {
+                        let domMU = document.getElementById('info_panel_mostuploads_'+(m+1)+'place');
+                        if(domMU) {
+                            const uploader = filterExplicitContent(mostUploads[m].name, mostUploads[m].censored_name, true, 20);
+                            domMU.innerHTML = '<a href="'+getHrefPlayer(mostUploads[m].id, 1)+'"><img class="player-mid-preview" src="'+mostUploads[m].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+uploader.span+'</a>';
+                            domMU.parentNode.innerHTML += '<span class="info-panel-title">'+mostUploads[m].published+' maps</span>';
+                        }
+                    }
+                }
+                return;
+            }
+
+            main();
+        </script>
+        <noscript>
+            <style>
+                .rc-header-panels,
+                .rc-slideshow,
+                .rc-info-panels,
+                a#logo,
+                #header,
+                #footer,
+                #wrapper_cmaps,
+                #wrapper_records,
+                #display_player,
+                #display_map,
+                #map_details {
+                    display: none;
+                }
+            </style>
+            <div id="logo" class="logo-header" style="place-self: center; margin: 4em;">
+                <span>reflex<br>racing</span>
+            </div>
+            <h1>Your browser does not support JavaScript!</h1>
+            <h2>Redirecting to /wiki...</h2>
+            <meta http-equiv="refresh" content="5;URL=/wiki/reflex-racing-wiki">
+        </noscript>
+    </body>
+</html>

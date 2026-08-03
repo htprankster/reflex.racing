@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- <meta id="auto_refresh" name="refresh" http-equiv="refresh_disabled" content="1200"> -->
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" href="../static/images/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="../bin/core/fonts.css">
+        <link rel="stylesheet" href="../bin/core/style.css">
+        <link id="theme" rel="stylesheet" href="../bin/core/themedark.css">
+        <script src="../bin/core/collection.js"></script>
+        <script src="../bin/core/leaderboards.js"></script>
+        <script src="../bin/core/content.js"></script>
+        <title>Reflex Racing > Leaderboards</title>
+    </head>
+    <body style="cursor:default">
+        <div id="background" class="bg-pattern"></div>
+        <a id="logo" class="logo-leaderboards" href="../"></a>
+        <div class="rc-header-panels svg-info-large">
+            <div class="rc-info-panel">
+                <div class="info-panel-summary">
+                    <div class="info-panel-row-details">
+                        <span id="info_panel_quick_announcement_title">NEWS</span>
+                        <span id="info_panel_quick_announcement_content" class="info-panel-content-details svg-info"><a href="#loading">Loading...</a></span>
+                    </div>
+                </div>
+            </div>
+            <div class="rc-info-panel">
+                <div class="info-panel-summary">
+                    <div class="info-panel-row-details">
+                        <span><span id="info_panel_stats_players"></span><span id="player_count" class="info-panel-content-details svg-info">PLAYERS</span></span>
+                        <span><span id="info_panel_stats_maps"></span><span id="map_count" class="info-panel-content-details svg-info">MAPS</span></span>
+                        <span><span id="info_panel_stats_records"></span><span id="record_count" class="info-panel-content-details svg-info">RECORDS</span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="rc-info-panel">
+                <div class="info-panel-summary">
+                    <span id="info_panel_maps_title" class="info-panel-title"></span>
+                    <span class="info-panel-details svg-info-small"><a id="info_panel_show_all_maps" href="./maps/"></a></span>
+                </div>
+                <div class="slideshow-panel-controls">
+                    <span id="slideshow_panel_controls_status" class="btn-flat btn-flat-info">LOADING</span>
+                    <div class="slideshow-panel-media-buttons">
+                        <button onclick="resetSlideshow()" id="slideshow_panel_controls_rewind" class="btn-text" disabled>Rewind</button>
+                        <button onclick="autoSlideshow()" id="slideshow_panel_controls_play" class="btn-text" disabled>Play</button>
+                    </div>
+                </div>
+            </div>
+            <div class="rc-info-panel">
+                <div class="info-panel-summary">
+                    <span id="info_panel_resources_title" class="info-panel-title"></span>
+                    <span id="info_panel_resources_links" class="info-panel-details svg-info-small"></span>
+                </div>
+            </div>
+        </div>
+        <div id="slideshow" class="rc-slideshow svg-info"></div>
+        <div class="rc-info-panels svg-info-large">
+            <div class="rc-info-panels-left">
+                <div class="rc-info-panel info-panel-column rc-activity-panel">
+                    <div class="info-panel-card">
+                        <div id="info_panel_activity_header" class="info-panel-scroll-header">
+                            <span id="info_panel_activity_title" class="info-panel-title">ACTIVITY</span>
+                            <span id="info_panel_activity_header_panel" class="info-panel-details svg-info-small">Loading</span>
+                            <ul id="info_panel_activity_tabs" class="info-panel-row-details info-panel-row-activity">
+                                <li><span class="info-panel-activity-grid-left"><span>Maps</span><span>Players</span></span><span class="info-panel-activity-grid-right">Time {<i>m:s.ms</i>}</span></li>
+                            </ul>
+                        </div>
+                        <ul id="info_panel_activity_data" class="info-panel-row-details info-panel-row-activity"></ul>
+                    </div>
+                </div>
+                <div class="rc-info-panel info-panel-column">
+                    <div class="info-panel-card">
+                        <span id="info_panel_statuspage_title" class="info-panel-title">STATUS PAGE</span>
+                        <ul class="info-panel-row-details">
+                            <li><span class="info-panel-title">Leaderboards:</span><span id="info_panel_tracker_status" class="info-panel-details svg-info" style="cursor:pointer;">Loading</span></li>
+                            <li><span class="info-panel-title">&rdsh; Last Update (24h):</span><span id="info_panel_tracker_lastupdate" class="info-panel-details svg-info">Loading</span></li><br>
+                            <li><span class="info-panel-title">RSS Feed:</span><span id="info_panel_rss_status" class="info-panel-details svg-info" style="cursor:pointer;">Loading</span></li>
+                            <li><span class="info-panel-title">&rdsh; Last Update (24h):</span><span id="info_panel_rss_lastupdate" class="info-panel-details svg-info">Loading</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="rc-info-panels-right">
+                <div class="rc-info-panel info-panel-column rc-rss-panel">
+                    <div class="info-panel-card">
+                        <div id="info_panel_feed_header" class="info-panel-scroll-header">
+                            <span id="info_panel_feed_title" class="info-panel-title">FEED</span>
+                            <span class="info-panel-details svg-info-small"><a id="info_panel_community_feed" href="/news" title="News page is wip"></a></span>
+                        </div>
+                        <div class="info-panel-row-details">
+                            <div id="info_panel_feed_content"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rc-info-panel info-panel-column">
+                    <div class="info-panel-card">
+                        <span id="info_panel_settings_title" class="info-panel-title">SETTINGS</span>
+                        <ul class="info-panel-row-details">
+                            <li><span class="info-panel-title"><img id="info_panel_settings_darkmode_preview" src="../static/images/shortcut_darkmode_switch.png" class="shortcut-preview"/> Dark mode:</span><span class="info-panel-details svg-info toggle"><input id="info_panel_settings_darkmode" type="checkbox" onchange="changeStyleCSS(this)" checked/><label id="info_panel_settings_darkmode_label"></label></span></li><br>
+                            <li><span class="info-panel-title"><img id="info_panel_settings_nsfw_preview" src="../static/images/shortcut_nsfw_off.png" class="shortcut-preview"/> Explicit content:</span><span class="info-panel-details svg-info toggle"><input id="info_panel_settings_nsfw" type="checkbox" onchange="changeExplicitContent(this)"/><label id="info_panel_settings_nsfw_label"></label></span></li><br>
+                            <li><span class="info-panel-title"><img id="info_panel_settings_autorefresh_preview" src="../static/images/shortcut_autorefresh_off.png" class="shortcut-preview"/> Auto-refresh:</span><span class="info-panel-details svg-info toggle"><input id="info_panel_settings_autorefresh" type="checkbox" onchange="changeAutoRefresh(this)"/><label id="info_panel_settings_autorefresh_label"></label></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer" class="svg-info-xlarge"></div>
+        <script>
+            initIDB();
+            initCheckbox('info_panel_settings_darkmode', lsiTheme, 'dark');
+            initCheckbox('info_panel_settings_nsfw', lsiNSFW, '1');
+            initCheckbox('info_panel_settings_autorefresh', lsiAutoRefresh, '1');
+            changeStyleCSS();
+            changeExplicitContent();
+            changeAutoRefresh();
+            document.getElementById('footer').innerHTML = footerLinks;
+            //Header [News]
+            document.getElementById('info_panel_quick_announcement_title').innerHTML = SVG_ANNOUCEMENT+' NEWS';
+            document.getElementById('info_panel_quick_announcement_content').innerHTML = '<a href="#loading">Loading...</a>';
+            //Header [Stats]
+            document.getElementById('info_panel_stats_players').innerHTML = SVG_PLAYER+' PLAYERS: ';
+            document.getElementById('player_count').innerHTML = '<a href="'+getHrefPlayer()+'">Loading '+SVG_OPEN_LINK+'</a>';
+            document.getElementById('info_panel_stats_maps').innerHTML = SVG_MAP+' MAPS: ';
+            document.getElementById('map_count').innerHTML = '<a href="'+getHrefMap()+'">Loading '+SVG_OPEN_LINK+'</a>';
+            document.getElementById('info_panel_stats_records').innerHTML = SVG_RECORD+' RECORDS: ';
+            document.getElementById('record_count').innerHTML = 'Loading';
+            //Header [Latest Maps]
+            document.getElementById('info_panel_maps_title').innerHTML = SVG_LATEST_MAP+' LATEST MAPS';
+            document.getElementById('info_panel_show_all_maps').innerHTML = SVG_OPEN_LINK_SMALL+' View all';
+            //Header [Slideshow controls]
+            document.getElementById('slideshow_panel_controls_rewind').innerHTML = SVG_REWIND;
+            document.getElementById('slideshow_panel_controls_play').innerHTML = SVG_PAUSE;
+            //Header [Resources]
+            document.getElementById('info_panel_resources_title').innerHTML = SVG_RESOURCES+' RESOURCES';
+            document.getElementById('info_panel_resources_links').innerHTML = '<a href="/wiki/reflex-racing-wiki">'+SVG_WIKI+' Wiki</a>'+
+                '<a href="/wiki/getting-started">'+SVG_GEAR+' Getting started</a>'+
+                '<a href="/wiki/movement/menu">'+SVG_WRENCH+' Movement guide</a>';
+            //Panel [Activity]
+            document.getElementById('info_panel_activity_title').innerHTML = SVG_ACTIVITY+' ACTIVITY';
+            document.getElementById('info_panel_activity_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
+                '<button activityClassName="improved-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Improved rankings</button>'+
+                '<button activityClassName="dropped-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Dropped rankings</button>';
+            document.getElementById('info_panel_activity_data').innerHTML = LOADING_GIF_L1;
+            //Panel [Feed]
+            document.getElementById('info_panel_feed_title').innerHTML = SVG_RSS+' FEED';
+            document.getElementById('info_panel_community_feed').innerHTML = SVG_OPEN_LINK_SMALL+' View racing news';
+            document.getElementById('info_panel_feed_content').innerHTML = LOADING_GIF_L1;
+            //Panel [Status Page]
+            document.getElementById('info_panel_statuspage_title').innerHTML = SVG_BOT+' STATUS PAGE';
+            //Panel [Settings]
+            document.getElementById('info_panel_settings_title').innerHTML = SVG_SETTINGS+' SETTINGS';
+
+            async function main() {
+                const rawMaps = await getIDBDataset(idbKeyMaps);
+                const rawPlayers = await getIDBDataset(idbKeyPlayers);
+                const rawRecords = await getIDBDataset(idbKeyRecords);
+                const rawActivity = await getIDBDataset(idbKeyActivity);
+                const rawRSS = await getIDBDataset(idbKeyRSS);
+                const rawMetadata = await getIDBDataset(idbKeyMetadata);
+
+                const fnMaps = new Maps(rawMaps);
+                const fnPlayers = new Players(rawPlayers);
+                const fnRecords = new Records(rawRecords);
+                const fnActivity = new Activity(rawActivity);
+                const fnMetadata = new Metadata(rawMetadata);
+
+                const leaderboardsPreview = () => {
+                    let i = 0, output = '';
+                    const cardMaxRecords = 6;
+                    const mapLBCharLimit = 27;
+                    const latestMaps = fnMaps.getLatest(40, mapLBCharLimit);
+                    while(i < latestMaps.length) {
+                        const topRecords = fnRecords.getByMap(latestMaps[i].id);
+                        const mapTitle = '<a class="cell-title" href="'+getHrefMap(latestMaps[i].id, 0)+'">'+SVG_OPEN_LINK+'&nbsp;'+filterExplicitContent(latestMaps[i].title, latestMaps[i].censored_title).span+'</a>';
+                        let mapPreview = '<a href="'+getHrefMap(latestMaps[i].id, 0)+'">';
+                        if(latestMaps[i].preview_url) {
+                            mapPreview += '<img map_id="'+latestMaps[i].id+'" class="cell-preview" src="'+latestMaps[i].preview_url+'" onerror="setBackgroundAlt(this);"/></a>';
+                        }
+                        else {
+                            if(latestMaps[i].creator === 'null') {
+                                mapPreview += '<div class="cell-broken-preview"><span>'+SVG_WARN+'</span>&nbsp;<span>Deleted</span>&nbsp;<span>'+SVG_WARN+'</span></div>';
+                            }
+                            else {
+                                mapPreview += '<div class="cell-missing-preview"><span>No preview</span></div></a>';
+                            }
+                        }
+                        const mapRecords = '<span class="cell-records no-select">'+topRecords.length+' Record'+(topRecords.length !== 1 ? 's': '')+'</span>';
+
+                        let mapTopPlayer = '';
+                        for(let pl = 0; pl < cardMaxRecords; pl++) {
+                            mapTopPlayer += '<li class="cell-leaderboards-row '+getTableRowBGColor(pl)+'">';
+                            if(topRecords[pl]) {
+                                const playerName = fnPlayers.getNameById(topRecords[pl].player_id, false, 20);
+                                if(playerName.str) {
+                                    mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
+                                                        '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;'+
+                                                        '<a href="'+getHrefPlayer(topRecords[pl].player_id)+'">'+playerName.span+'</a>'+
+                                                    '</span>'+
+                                                    '<span class="cell-top-player-score-'+pl+'">'+formatScore(topRecords[pl].score)+'</span></li>';
+                                }
+                                else {
+                                    mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
+                                                        '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;[deleted]'+
+                                                    '</span>'+
+                                                    '<span class="cell-top-player-score-'+pl+'">'+formatScore(topRecords[pl].score)+'</span></li>';
+                                }
+                            }
+                            else {
+                                mapTopPlayer += '&nbsp;</li>';
+                            }
+                        }
+                        const mapPlayers = '<ul class="cell-players">'+mapTopPlayer+'</ul>';
+
+                        output += '<div class="cell-map">'+mapTitle+mapPreview+mapRecords+mapPlayers+'</div>';
+                        i++;
+                    }
+
+                    if(output !== '') {
+                        return '<div id="slideshow_wrapper" class="cell-group cell-group-scroll">'+output+'</div>'+'<div id="slideshow_wrapper_hidden" aria-hidden class="cell-group cell-group-scroll">'+output+'</div>';
+                    }
+                    return output;
+                };
+
+                const activityPreview = (recordLimit = 200) => {
+                    let output = new Array();
+                    const activityObj = fnActivity.orderByDate();
+                    for(let ai = 0; ai < activityObj.length; ai++) {
+                        const playerNameEntry = fnPlayers.getNameById(activityObj[ai].player_id, true);
+                        let playerName = (playerNameEntry.str || '[deleted]');
+                        let mapTitle = fnMaps.getTitleById(activityObj[ai].map_id);
+                        trimmedNames = trimStrLength(playerName, 13, mapTitle.str, 15);
+                        playerName = trimmedNames[0];
+                        mapTitle.str = trimmedNames[1];
+
+                        let activitySymbol = '+';
+                        let activityTypeClass = '';
+                        let activityDetails = playerNameEntry.str+' ';
+                        //const warnOverwrite = 'To avoid this, check out the addons section in the getting started wiki guide.';
+                        if(activityObj[ai].type === 'update_record') {
+                            if(activityObj[ai].details.rank > 0) {
+                                activitySymbol = '&uarr;';
+                                activityTypeClass = 'improved-ranking';
+                                activityDetails += 'climbed the leaderboards by '+activityObj[ai].details.rank+' places!';
+                            }
+                            else if(activityObj[ai].details.rank < 0) {
+                                activitySymbol = '&darr;';
+                                activityTypeClass = 'dropped-ranking';
+                                activityDetails += 'lost '+Math.abs(activityObj[ai].details.rank)+' places by overwriting a previous record!'; //+warnOverwrite
+                            }
+                            else {
+                                activitySymbol = '=';
+                                if(activityObj[ai].details.score > 0) {
+                                    activityTypeClass = 'improved-ranking';
+                                    activityDetails += 'recorded a new personal best!';
+                                }
+                                else {
+                                    activityTypeClass = 'dropped-ranking';
+                                    activityDetails += 'overwrote a previous record!'; //+warnOverwrite
+                                }
+                            }
+                        }
+                        else {
+                            activityTypeClass = 'new-ranking';
+                            activityDetails += 'added a new record!';
+                        }
+
+                        const activityScoreSpan = (activityObj[ai].type === 'update_record' ? (activityObj[ai].details.score < 0 ? '<span class="span-special-crit">+' : '<span class="span-special-info">-') : '<span class="span-special-value">')+formatScore(activityObj[ai].details.score)+' ['+activitySymbol+']</span>';
+                        const activityTargetSpan = '<a href="'+getHrefMap(activityObj[ai].map_id, 0)+'" class="activity-link-map">'+mapTitle.span+'</a>'+(playerNameEntry.str ? '<a href="'+getHrefPlayer(activityObj[ai].player_id)+'" class="activity-link-player">'+playerNameEntry.span+'</a>' : playerName);
+
+                        output.push('<li class="cell-leaderboards-row '+activityTypeClass+' '+getTableRowBGColor(ai)+'"><span class="info-panel-activity-grid-left">'+activityTargetSpan+'</span><span class="info-panel-activity-grid-right" title="'+activityDetails+'">'+activityScoreSpan+'</span></li>');
+                    }
+
+                    if(output.length > 0) {
+                        return output.join('');
+                    }
+                    return '<li><span>No recent activity.</span></li>';
+                };
+
+                document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
+                //Header [News]
+                document.getElementById('info_panel_quick_announcement_content').innerHTML = formatRSS(rawRSS, 1, true);
+                //Header [Stats]
+                document.getElementById('player_count').innerHTML = '<a href="'+getHrefPlayer()+'">'+fnPlayers.count()+' '+SVG_OPEN_LINK+'</a>';
+                document.getElementById('map_count').innerHTML = '<a href="'+getHrefMap()+'">'+fnMaps.count()+' '+SVG_OPEN_LINK+'</a>';
+                document.getElementById('record_count').innerHTML = fnRecords.count();
+                //Header [Slideshow controls]
+                document.getElementById('slideshow_panel_controls_status').innerHTML = 'AUTO';
+                document.getElementById('slideshow_panel_controls_rewind').disabled = false;
+                document.getElementById('slideshow_panel_controls_rewind').innerHTML = SVG_REWIND;
+                document.getElementById('slideshow_panel_controls_play').disabled = false;
+                document.getElementById('slideshow_panel_controls_play').innerHTML = SVG_PAUSE;
+                //Slideshow
+                document.getElementById('slideshow').innerHTML += leaderboardsPreview();
+                //Panel [Activity]
+                document.getElementById('info_panel_activity_title').innerHTML = SVG_ACTIVITY+' ACTIVITY';
+                document.getElementById('info_panel_activity_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
+                    '<button activityClassName="improved-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Improved rankings</button>'+
+                    '<button activityClassName="dropped-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Dropped rankings</button>';
+                document.getElementById('info_panel_activity_data').innerHTML = activityPreview();
+                //Panel [Feed]
+                document.getElementById('info_panel_feed_content').innerHTML = formatRSS(rawRSS, 20);
+                //Panel [Tracker]
+                document.getElementById('info_panel_statuspage_title').innerHTML = SVG_BOT+' STATUS PAGE';
+                document.getElementById('info_panel_tracker_status').innerHTML = fnMetadata.getLeaderboardsStatus(1);
+                document.getElementById('info_panel_tracker_lastupdate').innerHTML = fnMetadata.getLeaderboardsLastUpdate();
+                document.getElementById('info_panel_rss_status').innerHTML = fnMetadata.getFeedStatus(1);
+                document.getElementById('info_panel_rss_lastupdate').innerHTML = fnMetadata.getFeedLastUpdate();
+            }
+
+            main();
+        </script>
+        <noscript>
+            <style>
+                .rc-header-panels,
+                .rc-slideshow,
+                .rc-info-panels,
+                a#logo,
+                #header,
+                #footer,
+                #wrapper_cmaps,
+                #wrapper_records,
+                #display_player,
+                #display_map,
+                #map_details {
+                    display: none;
+                }
+            </style>
+            <div id="logo" class="logo-header" style="place-self: center; margin: 4em;">
+                <span>reflex<br>racing</span>
+            </div>
+            <h1>Your browser does not support JavaScript!</h1>
+            <h2>Redirecting to /wiki...</h2>
+            <meta http-equiv="refresh" content="5;URL=/wiki/reflex-racing-wiki">
+        </noscript>
+    </body>
+</html>

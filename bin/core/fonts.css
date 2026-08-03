@@ -1,0 +1,13 @@
+@font-face
+{
+    /* ./AlteHaasGrotesk-licence.txt */
+    font-family: "AlteHaasGroteskBold";
+    src: url("../../static/fonts/AlteHaasGroteskBold.ttf");
+}
+
+@font-face
+{
+    /* ./geist-mono-licence.txt */
+    font-family: "GeistMono";
+    src: url("../../static/fonts/GeistMono-VariableFont_wght.ttf");
+}
