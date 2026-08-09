@@ -279,7 +279,7 @@ class Metadata {
                     break;
                 case 'paused':
                     statusClass = this.colorClass.warn;
-                    statusDescription = 'The tracker has been manually paused due to maintenance. It is currently inactive and will not update the website feed until resumed.';
+                    statusDescription = 'The tracker has been manually paused due to maintenance.\nIt is currently inactive and will not update the website feed until resumed.';
                     break;
                 case 'stall':
                     statusClass = this.colorClass.crit;
@@ -1138,7 +1138,7 @@ function changeShowcaseView(event, panel) {
 function adjustLDBHeaderOffset(topElementId, headerElementId) {
     const span = document.getElementById(topElementId);
     const header = document.getElementById(headerElementId);
-    const spanHeight = span.scrollHeight+2;
+    const spanHeight = span.scrollHeight+1;
     header.style.top = spanHeight + 'px';
 }
 
@@ -1299,7 +1299,7 @@ function getCountryName(data, alpha2code) {
             return countryName.join(' ').trim();
         }
     }
-    return 'Country';
+    return 'No location provided';
 }
 
 function formatMapTypeLine(typeList) {
@@ -1472,8 +1472,7 @@ async function getIndexedData(index) {
     });
 }
 
-async function setIDBDataset(index, dataset)
-{
+async function setIDBDataset(index, dataset) {
     if(indexedDB) {
         var data = { [idbKeyPath]: index, [idbIndex]: JSON.stringify(dataset) };
         var request = indexedDB.open(idb, 1);

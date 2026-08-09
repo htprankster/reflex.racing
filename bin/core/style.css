@@ -482,6 +482,7 @@ body {
 .info-panel-3stat-details > li > .info-panel-details > a,
 .info-panel-4stat-details > li > .info-panel-details > a {
     display: inherit;
+    text-align: center;
 }
 
 .info-panel-3stat-details > li > .info-panel-title,

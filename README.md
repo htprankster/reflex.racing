@@ -13,5 +13,6 @@ No AI was used in any part of this project and as a beta release, design and cod
 ## Roadmap
 - Tournament pages
 - Community guidelines / Rules
+- Leaderboard filters
 - Wiki content
 - Status code handlers
