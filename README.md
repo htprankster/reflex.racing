@@ -1,4 +1,4 @@
-![reflex.racing](static/images/reflex-racing-logo-w.png)
+![reflex.racing](static/images/reflex-racing-logo-bw.png)
 
 ![Static Badge](https://img.shields.io/badge/VanillaJS-yellow?logo=javascript) ![Static Badge](https://img.shields.io/badge/No-AI-lightyellow?labelColor=lightyellow)
 
