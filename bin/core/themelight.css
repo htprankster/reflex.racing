@@ -409,25 +409,28 @@ span.cell-top-player-score {
 
 .btn-flat {
     border: 1px solid #545454;
-    background-color: hsl(0deg 0% 25% / 5%);
+    background-color: hsla(0, 0%, 25%, 5%);
 }
 
+a.btn-flat-custom-0,
 .btn-flat-custom-0 {
-    border: 1px solid hsl(0deg 80% 25%);
-    background-color: hsl(0deg 80% 25% / 5%);
+    border: 1px solid hsl(0, 80%, 25%);
+    /* background-color: hsla(0, 80%, 25%, 5%); */
     color: #eb4747;
 }
 
+a.btn-flat-custom-1,
 .btn-flat-custom-1 {
-    border: 1px solid hsl(200deg 80% 25%);
-    background-color: hsl(200deg 80% 25% / 5%);
-    color: #47bdeb;
+    border: 1px solid hsl(60, 80%, 25%);
+    /* background-color: hsla(60, 80%, 25%, 5%); */
+    color: #dec700;
 }
 
+a.btn-flat-custom-2,
 .btn-flat-custom-2 {
-    border: 1px solid hsl(60deg 80% 25%);
-    background-color: hsl(60deg 80% 25% / 5%);
-    color: #ebde47;
+    border: 1px solid hsl(200, 80%, 25%);
+    /* background-color: hsla(200, 80%, 25%, 5%); */
+    color: #47bdeb;
 }
 
 .btn-flat-info {
@@ -438,7 +441,7 @@ span.cell-top-player-score {
 
 .btn-flat-warn {
     border: 1px solid hsl(59, 80%, 25%);
-    background-color: hsl(59, 80%, 25%, 5%);
+    background-color: hsla(59, 80%, 25%, 5%);
     color: #e9d100;
 }
 

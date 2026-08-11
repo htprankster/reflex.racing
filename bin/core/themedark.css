@@ -452,25 +452,28 @@ span.cell-top-player-score {
 
 .btn-flat {
     border: 1px solid #545454;
-    background-color: hsl(0deg 0% 25% / 20%);
+    background-color: hsl(0, 0%, 25%, 0.2);
 }
 
+a.btn-flat-custom-0,
 .btn-flat-custom-0 {
     border: 1px solid #730d0d;
-    background-color: hsl(0deg 80% 25% / 20%);
+    background-color: hsla(0, 80%, 25%, 0.2);
     color: #eb4747;
 }
 
+a.btn-flat-custom-1,
 .btn-flat-custom-1 {
-    border: 1px solid hsl(200deg 80% 25%);
-    background-color: hsl(200deg 80% 25% / 20%);
-    color: #47bdeb;
+    border: 1px solid hsl(60, 80%, 25%);
+    background-color: hsla(60, 80%, 25%, 0.2);
+    color: #ebde47;
 }
 
+a.btn-flat-custom-2,
 .btn-flat-custom-2 {
-    border: 1px solid hsl(60deg 80% 25%);
-    background-color: hsl(60deg 80% 25% / 20%);
-    color: #ebde47;
+    border: 1px solid hsl(200, 80%, 25%);
+    background-color: hsla(200, 80%, 25%, 0.2);
+    color: #47bdeb;
 }
 
 .btn-flat-info {
@@ -481,7 +484,7 @@ span.cell-top-player-score {
 
 .btn-flat-warn {
     border: 1px solid hsl(59, 80%, 25%);
-    background-color: hsl(59, 80%, 25%, 20%);
+    background-color: hsla(59, 80%, 25%, 0.2);
     color: #ebe847;
 }
 
@@ -570,7 +573,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc1 {
-    border: 2px solid hsl(0deg 0% 80.18%);
+    border: 2px solid hsl(0, 0%, 80.18%);
     background-color: #494949;
     color: #f0f8ff;
 }
@@ -580,7 +583,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc2 {
-    border: 2px solid hsl(190.72deg 100% 38.78%);
+    border: 2px solid hsl(190.72, 100%, 38.78%);
     background-color: #003544;
     color: #2ac5ff;
 }
@@ -590,7 +593,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc3 {
-    border: 2px solid hsl(123deg 90% 30%);
+    border: 2px solid hsl(123, 90%, 30%);
     background-color: #063e00;
     color: #32da30;
 }
@@ -600,7 +603,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc4 {
-    border: 2px solid hsl(58deg 100% 34%);
+    border: 2px solid hsl(58, 100%, 34%);
     background-color: #3c3e00;
     color: #ffeb3b;
 }
@@ -620,7 +623,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc6 {
-    border: 2px solid hsl(270.72deg 100% 37.46%);
+    border: 2px solid hsl(270.72, 100%, 37.46%);
     background-color: #2c0042;
     color: #8000ff;
 }
@@ -630,7 +633,7 @@ span.cell-top-player-score {
 }
 
 .btn-flat-leveldfc7 {
-    border: 2px solid hsl(0deg 0% 28.56%);
+    border: 2px solid hsl(0, 0%, 28.56%);
     background-color: #212121;
     color: #686868;
 }
