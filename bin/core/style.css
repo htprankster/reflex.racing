@@ -1772,7 +1772,7 @@ img.shortcut-preview {
     pointer-events: none;
 }
 
-@media only screen and (max-width: 1060px) {
+@media only screen and (max-width: 1080px) {
     #logo {
         width: stretch !important;
         margin: 2em;
@@ -1893,7 +1893,7 @@ img.shortcut-preview {
     }
 }
 
-@media only screen and (max-width: 430px) {
+@media only screen and (max-width: 480px) {
     .rc-info-panel {
         font-size: calc(80% + 0.1vw);
     }
