@@ -210,7 +210,8 @@ function changeStyleCSS(event = false) {
     let stylesheet = document.getElementById('theme');
     if(stylesheet) {
         let href = stylesheet.href.split('/');
-        href[href.length-1] = (mode === 'light' ? 'themelight.css' : 'themedark.css');
+        const ext = '.css'+href[href.length-1].split('.css')[1];
+        href[href.length-1] = (mode === 'light' ? 'themelight' : 'themedark')+ext;
         stylesheet.href = href.join('/');
         localStorage.setItem(lsiTheme, mode);
     }
