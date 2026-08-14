@@ -376,6 +376,10 @@ body {
     text-decoration: underline;
 }
 
+.info-panel-rss-post img {
+    display: none;
+}
+
 .info-panel-news-wrapper {
     height: 30vw;
     display: flex;
