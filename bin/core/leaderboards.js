@@ -60,8 +60,8 @@ class Maps {
             let i = 0;
             while(i < filteredMaps.length) {
                 if(filteredMaps[i].title.length > charLimit) {
-                    filteredMaps[i].title = filteredMaps[i].title.slice(0, charLimit)+'&mldr;';
-                    filteredMaps[i].censored_title = filteredMaps[i].censored_title.slice(0, charLimit)+'&mldr;';
+                    filteredMaps[i].title = filteredMaps[i].title.slice(0, charLimit).trim()+'&mldr;';
+                    filteredMaps[i].censored_title = filteredMaps[i].censored_title.slice(0, charLimit).trim()+'&mldr;';
                 }
 
                 i++;
@@ -567,7 +567,7 @@ function convertDisplayName(str, stripColor = false, charlimit = 0) {
             if(str.length+sub.length > limit) {
                 let nl = (str.length+sub.length)-limit;
                 if(nl < sub.length) {
-                    return sub.slice(0, nl)+'&mldr;';
+                    return sub.slice(0, nl).trim()+'&mldr;';
                 }
                 return '';
             }
@@ -614,7 +614,7 @@ function convertDisplayName(str, stripColor = false, charlimit = 0) {
         }
     }
     else if(charlimit > 0 && output.length > charlimit) {
-        output = output.slice(0, charlimit)+'&mldr;';
+        output = output.slice(0, charlimit).trim()+'&mldr;';
     }
 
     return output;
@@ -686,6 +686,13 @@ function changeExplicitContent(event) {
 }
 
 function filterExplicitContent(strNSFW, strCensored, stripColor = false, charlimit = 0) {
+    function cutToCharlimit(str, limit = 0) {
+        if(limit > 0 && str.length > limit) {
+            return str.slice(0, limit).trim()+'&mldr;';
+        }
+        return str;
+    }
+
     strNSFW = strNSFW.replaceAll('"', '&quot;');
     strCensored = strCensored.replaceAll('"', '&quot;');
     let output = strCensored;
@@ -696,6 +703,8 @@ function filterExplicitContent(strNSFW, strCensored, stripColor = false, charlim
 
     if(output) {
         output = convertDisplayName(output, stripColor, charlimit);
+        strNSFW = cutToCharlimit(strNSFW, charlimit);
+        strCensored = cutToCharlimit(strCensored, charlimit);
         let spanOutput = '<span class="explicit-content" explicit="'+strNSFW+'" censored="'+strCensored+'">'+output+'</span>';
         return {str: output, span: spanOutput};
     }
@@ -1565,11 +1574,13 @@ async function getIDBDataset(key) {
     let dataset = false;
     if(!latestVersion || !indexedDB) {
         dataset = await fetchDATA(fetchURL);
-        setIDBDataset(key, dataset);
-        const d = new Date();
-        idbUpdates[key] = d.valueOf();
-        localStorage.setItem(lastUpdateKey, JSON.stringify(idbUpdates));
-        return dataset;
+        if(dataset.length > 0) {
+            setIDBDataset(key, dataset);
+            const d = new Date();
+            idbUpdates[key] = d.valueOf();
+            localStorage.setItem(lastUpdateKey, JSON.stringify(idbUpdates));
+            return dataset;
+        }
     }
 
     await getIndexedData(key).then(output => { dataset = output; });

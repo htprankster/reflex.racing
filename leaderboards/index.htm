@@ -189,19 +189,20 @@
                         for(let pl = 0; pl < cardMaxRecords; pl++) {
                             mapTopPlayer += '<li class="cell-leaderboards-row '+getTableRowBGColor(pl)+'">';
                             if(topRecords[pl]) {
-                                const playerName = fnPlayers.getNameById(topRecords[pl].player_id, false, 20);
+                                const formattedScore = formatScore(topRecords[pl].score);
+                                const playerName = fnPlayers.getNameById(topRecords[pl].player_id, false, 26-formattedScore.length);
                                 if(playerName.str) {
                                     mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
                                                         '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;'+
                                                         '<a href="'+getHrefPlayer(topRecords[pl].player_id)+'">'+playerName.span+'</a>'+
                                                     '</span>'+
-                                                    '<span class="cell-top-player-score-'+pl+'">'+formatScore(topRecords[pl].score)+'</span></li>';
+                                                    '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
                                 }
                                 else {
                                     mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
                                                         '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;[deleted]'+
                                                     '</span>'+
-                                                    '<span class="cell-top-player-score-'+pl+'">'+formatScore(topRecords[pl].score)+'</span></li>';
+                                                    '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
                                 }
                             }
                             else {
