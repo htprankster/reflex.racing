@@ -8,7 +8,7 @@
         <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.1">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
         <script src="../../bin/core/collection.js?v=0.1"></script>
-        <script src="../../bin/core/leaderboards.js?v=0.2"></script>
+        <script src="../../bin/core/leaderboards.js?v=0.3"></script>
         <script src="../../bin/core/content.js?v=0.1"></script>
         <title id="page_title">Reflex Racing > Maps</title>
     </head>
@@ -128,8 +128,8 @@
                         document.getElementById('map_preview_title').innerHTML = mapTitle.span;
                         document.getElementById('info_panel_details_title').innerHTML = SVG_INFO+' DETAILS'+'<br><span id="info_panel_map_details_lastcheck" title="Last check: '+fnMetadata.getLeaderboardsLastUpdate()+'" style="cursor:pointer" class="info-panel-details svg-info-small">'+SVG_ACTIVITY+' '+fnMetadata.getLeaderboardsLastUpdate('compact')+'</span>';
                         document.getElementById('info_panel_map_details_records').innerHTML = fnRecords.getByMap(mapId).length;
-                        document.getElementById('info_panel_map_details_type').innerHTML = formatMapTypeLine(mapObj.custom.type);
-                        document.getElementById('info_panel_map_details_difficulty').innerHTML = formatMapDifficultyLine(mapObj.custom.difficulty);
+                        document.getElementById('info_panel_map_details_type').innerHTML = formatMapTypeLine((mapObj.custom ? mapObj.custom.type : '?'));
+                        document.getElementById('info_panel_map_details_difficulty').innerHTML = formatMapDifficultyLine((mapObj.custom ? mapObj.custom.difficulty : '?'));
                         if(!isNaN(mapObj.creator)) {
                             document.getElementById('info_panel_map_details_filesize').innerHTML = convertBytes(mapObj.file_size, false);
                             document.getElementById('info_panel_map_details_posted').innerHTML = convertTime(mapObj.time_created, 'compact');
@@ -148,6 +148,20 @@
                             else {
                                 document.getElementById('info_panel_map_details_creator').innerHTML = '[deleted]';
                             }
+                        }
+                        else {
+                            document.getElementById('info_panel_map_details_filesize').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_filesize').title = 'Data shift detected! Please wait for the next refresh.';
+                            document.getElementById('info_panel_map_details_filesize').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_posted').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_posted').title = 'Data shift detected! Please wait for the next refresh.';
+                            document.getElementById('info_panel_map_details_posted').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_updated').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_updated').title = 'Data shift detected! Please wait for the next refresh.';
+                            document.getElementById('info_panel_map_details_updated').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_creator').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_creator').title = 'Data shift detected! Please wait for the next refresh.';
+                            document.getElementById('info_panel_map_details_creator').style.cursor = 'pointer';
                         }
                         document.getElementById('steam_workshop_link').href = 'http://steamcommunity.com/sharedfiles/filedetails/?id='+mapId;
                         //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;

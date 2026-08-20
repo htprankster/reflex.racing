@@ -19,7 +19,7 @@ class Maps {
                     if(this.maps[i][property] || !isNaN(this.maps[i][property])) {
                         return this.maps[i][property];
                     }
-                    else if(this.maps[i].custom[property] || !isNaN(this.maps[i].custom[property])) {
+                    else if(this.maps[i].custom && (this.maps[i].custom[property] || !isNaN(this.maps[i].custom[property]))) {
                         return this.maps[i].custom[property];
                     }
                     return false;
@@ -159,6 +159,16 @@ class Records {
             mi++;
         }
         return mapRecords;
+    }
+
+    getByPlayerAndMap(player, map) {
+        for(let pm = 0; pm < this.records.length; pm++) {
+            if(this.records[pm].player_id == player &&
+                this.records[pm].map_id == map) {
+                return this.records[pm];
+            }
+        }
+        return false;
     }
 
     mostPlayedMaps() {
@@ -509,6 +519,7 @@ function getTableRowBGColor(x) {
 function convertTime(time, format = 'full'){
     const timestamp = (isNaN(time) ? time : parseInt((time+'0000000000000').slice(0,13)));
     const d = new Date(timestamp);
+    if(isNaN(d.valueOf())) { return false; }
 
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     switch(format) {
@@ -693,20 +704,22 @@ function filterExplicitContent(strNSFW, strCensored, stripColor = false, charlim
         return str;
     }
 
-    strNSFW = strNSFW.replaceAll('"', '&quot;');
-    strCensored = strCensored.replaceAll('"', '&quot;');
-    let output = strCensored;
-    const lsi = localStorage.getItem(lsiNSFW);
-    if(lsi && parseInt(lsi) === 1) {
-        output = strNSFW;
-    }
+    if(strNSFW && strCensored) {
+        strNSFW = strNSFW.replaceAll('"', '&quot;');
+        strCensored = strCensored.replaceAll('"', '&quot;');
+        let output = strCensored;
+        const lsi = localStorage.getItem(lsiNSFW);
+        if(lsi && parseInt(lsi) === 1) {
+            output = strNSFW;
+        }
 
-    if(output) {
-        output = convertDisplayName(output, stripColor, charlimit);
-        strNSFW = cutToCharlimit(strNSFW, charlimit);
-        strCensored = cutToCharlimit(strCensored, charlimit);
-        let spanOutput = '<span class="explicit-content" explicit="'+strNSFW+'" censored="'+strCensored+'">'+output+'</span>';
-        return {str: output, span: spanOutput};
+        if(output) {
+            output = convertDisplayName(output, stripColor, charlimit);
+            strNSFW = cutToCharlimit(strNSFW, charlimit);
+            strCensored = cutToCharlimit(strCensored, charlimit);
+            let spanOutput = '<span class="explicit-content" explicit="'+strNSFW+'" censored="'+strCensored+'">'+output+'</span>';
+            return {str: output, span: spanOutput};
+        }
     }
     return {str: false, span: false};
 }
@@ -908,7 +921,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         cell.innerHTML = formatFavouriteMapType(RECORDS[i].fav, RECORDS[i].records);
                         break;
                     case keyMapType:
-                        const mapTypeList = fnMaps.getEntryById(RECORDS[i].id, keyMapType);
+                        const mapTypeList = fnMaps.getEntryById(RECORDS[i].id, keyMapType) || ['?'];
                         const mapTypes = formatMapTypeLine(mapTypeList);
                         cell.className = dataSortMapType;
                         cell.setAttribute('sort-value', mapTypeList.sort().reverse().join(','));
@@ -917,7 +930,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         cell.innerHTML = mapTypes;
                         break;
                     case keyDifficulty:
-                        const difficulty = fnMaps.getEntryById(RECORDS[i].id, keyDifficulty);
+                        const difficulty = fnMaps.getEntryById(RECORDS[i].id, keyDifficulty) || '?';
                         const difficultySpan = formatMapDifficultyLine(difficulty, false);
                         cell.className = dataSortDifficulty;
                         cell.setAttribute('sort-value', difficulty);
@@ -966,11 +979,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         }
 
                         const mapTitle = filterExplicitContent(mapObj.title, mapObj.censored_title, false, 50);
-                        const mapDeleted = (!isNaN(mapObj.time_created) ? '' : '&nbsp;<span class="svg-crit" title="This map was deleted and cannot be played anymore!">'+SVG_WARN+'</span>');
+                        const mapDataShifted = (!isNaN(mapObj.time_created) ? '' : '&nbsp;<span class="svg-crit" title="Data shift detected! Please wait for the next refresh.">'+SVG_WARN+'</span>');
                         cell.className = dataSortKey;
                         cell.setAttribute('sort-value', mapTitle.str.toLowerCase());
                         cell.setAttribute('sort-type', 'string');
-                        cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+'" href="'+getHrefMap(mapId, dirLevels)+'">'+mapTitle.span+mapDeleted+'</a></span>';
+                        cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+'" href="'+getHrefMap(mapId, dirLevels)+'">'+mapTitle.span+mapDataShifted+'</a></span>';
                         break;
                     case keyItemPlayer:
                         const playerId = RECORDS[i].player_id || RECORDS[i].id;
@@ -1499,28 +1512,6 @@ async function setIDBDataset(index, dataset) {
         };
     }
     return;
-}
-
-function autoRefresh() {
-    const now = new Date();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    const refreshIntervals = [10, 30, 50, 70];
-    let remainingMinutes = 20;
-    for(let i = 0; i < refreshIntervals.length; i++) {
-        if(minutes < refreshIntervals[i]) {
-            remainingMinutes = refreshIntervals[i] - minutes;
-            break;
-        }
-    }
-
-    const timer = (((remainingMinutes * 60) - seconds) * 1000);
-    autoRefreshTimeout = setTimeout(function() {
-        const check = localStorage.getItem(lsiAutoRefresh);
-        if(check && check === '1') {
-            window.location.reload();
-        }
-    }, timer);
 }
 
 async function getIDBDataset(key) {

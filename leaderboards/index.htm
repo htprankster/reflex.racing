@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="../bin/core/style.css?v=0.2">
         <link id="theme" rel="stylesheet" href="../bin/core/themedark.css?v=0.1">
         <script src="../bin/core/collection.js?v=0.1"></script>
-        <script src="../bin/core/leaderboards.js?v=0.2"></script>
+        <script src="../bin/core/leaderboards.js?v=0.3"></script>
         <script src="../bin/core/content.js?v=0.1"></script>
         <title>Reflex Racing > Leaderboards</title>
     </head>
@@ -235,6 +235,7 @@
                         let activitySymbol = '+';
                         let activityTypeClass = '';
                         let activityDetails = playerNameEntry.str+' ';
+                        let activityScoreBackup = '0';
                         //const warnOverwrite = 'To avoid this, check out the addons section in the getting started wiki guide.';
                         if(activityObj[ai].type === 'update_record') {
                             if(activityObj[ai].details.rank > 0) {
@@ -262,9 +263,14 @@
                         else {
                             activityTypeClass = 'new-ranking';
                             activityDetails += 'added a new record!';
+                            if(isNaN(activityObj[ai].details.score)) {
+                                let activityBackup = fnRecords.getByPlayerAndMap(activityObj[ai].player_id, activityObj[ai].map_id);
+                                activityScoreBackup = activityBackup.score;
+                            }
                         }
 
-                        const activityScoreSpan = (activityObj[ai].type === 'update_record' ? (activityObj[ai].details.score < 0 ? '<span class="span-special-crit">+' : '<span class="span-special-info">-') : '<span class="span-special-value">')+formatScore(activityObj[ai].details.score)+' ['+activitySymbol+']</span>';
+                        const activityScoreSpan = (activityObj[ai].type === 'update_record' ? (activityObj[ai].details.score < 0 ? '<span class="span-special-crit">+' : '<span class="span-special-info">-') : '<span class="span-special-value">')+
+                                                    formatScore(activityObj[ai].details.score || activityScoreBackup)+' ['+activitySymbol+']</span>';
                         const activityTargetSpan = '<a href="'+getHrefMap(activityObj[ai].map_id, 0)+'" class="activity-link-map">'+mapTitle.span+'</a>'+(playerNameEntry.str ? '<a href="'+getHrefPlayer(activityObj[ai].player_id)+'" class="activity-link-player">'+playerNameEntry.span+'</a>' : playerName);
 
                         output.push('<li class="cell-leaderboards-row '+activityTypeClass+' '+getTableRowBGColor(ai)+'"><span class="info-panel-activity-grid-left">'+activityTargetSpan+'</span><span class="info-panel-activity-grid-right" title="'+activityDetails+'">'+activityScoreSpan+'</span></li>');
