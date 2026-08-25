@@ -873,7 +873,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
 
                 switch(HEADER[j].k) {
                     case keyGR:
-                        const globalRankTemp = RECORDS[i].globalrank;
+                        const globalRankTemp = RECORDS[i].globalrank || 0;
                         const globalRank = (globalRankTemp !== 0 ? globalRankTemp : fnPlayers.count());
                         let grClassSuffix = '';
                         if(globalRank <= 3) {
@@ -891,7 +891,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+grClassSuffix+'" href="'+getHrefPlayer(RECORDS[i].id, dirLevels)+'">'+(globalRankTemp !== 0 ? globalRank : '-----------'.slice(0,globalRank.toString().length))+'</a></span>';
                         break;
                     case keyAR:
-                        const avgRankTemp = RECORDS[i].avgrank;
+                        const avgRankTemp = RECORDS[i].avgrank || 0;
                         const avgRank = (avgRankTemp !== 0 ? avgRankTemp : fnPlayers.count());
                         let arClassSuffix = (avgRank <= 10 ? (RECORDS[i].records > 10 ? '-hl' : '') : '');
                         cell.className = dataSortAR;
@@ -900,11 +900,12 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+arClassSuffix+'" href="'+getHrefPlayer(RECORDS[i].id, dirLevels)+'">'+(avgRankTemp !== 0 ? avgRank : '-----------'.slice(0,avgRank.toString().length))+'</a></span>';
                         break;
                     case keyWR:
-                        let wrClassSuffix = (RECORDS[i].wrs > 0 ? '-hl' : '');
+                        const worldRecords = RECORDS[i].wrs || 0;
+                        let wrClassSuffix = (worldRecords > 0 ? '-hl' : '');
                         cell.className = dataSortWR;
-                        cell.setAttribute('sort-value', RECORDS[i].wrs);
+                        cell.setAttribute('sort-value', worldRecords);
                         cell.setAttribute('sort-type', 'int');
-                        cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+wrClassSuffix+'" href="'+getHrefPlayer(RECORDS[i].id, dirLevels)+'">'+RECORDS[i].wrs+'</a></span>';
+                        cell.innerHTML = '<span class="cell-table-key"><a class="'+HEADER[j].class+wrClassSuffix+'" href="'+getHrefPlayer(RECORDS[i].id, dirLevels)+'">'+worldRecords+'</a></span>';
                         break;
                     case keyRecords:
                         let recordsCount = (key === 'player' ? fnRecords.getByPlayer(RECORDS[i].id) : fnRecords.getByMap(RECORDS[i].id)) || [];
@@ -1352,6 +1353,9 @@ function formatMapDifficultyLine(difficultyObj, asLabel = true) {
 }
 
 function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
+    if(!favMapTypeObj) {
+        favMapTypeObj = {strafe:0,rocket:0,plasma:0,grenade:0};
+    }
     const strafeType = favMapTypeObj.strafe || 0;
     const rocketType = favMapTypeObj.rocket || 0;
     const plasmaType = favMapTypeObj.plasma || 0;

@@ -8,7 +8,7 @@
         <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.1">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
         <script src="../../bin/core/collection.js?v=0.2"></script>
-        <script src="../../bin/core/leaderboards.js?v=0.3"></script>
+        <script src="../../bin/core/leaderboards.js?v=0.4"></script>
         <script src="../../bin/core/content.js?v=0.1"></script>
         <title id="page_title">Reflex Racing > Players</title>
     </head>
@@ -150,19 +150,25 @@
                     document.getElementById('steam_profile_link').href = 'https://steamcommunity.com/profiles/'+playerId;
 
                     document.getElementById('player_preview_title').innerHTML = filterExplicitContent(playerName, playerNameSafe).span;
-                    if(playerObj.avatar !== 'null') {
+                    if(playerObj.avatar) {
                         document.getElementById('player_avatar').src = playerObj.avatar;
                         document.getElementById('player_avatar').style = 'visibility: visible !important';
                         document.getElementById('player_avatar_focus').src = playerObj.avatar;
                         document.getElementById('player_avatar_focus').style = 'visibility: visible !important';
                     }
-                    const countryName = getCountryName(rawAlpha2Countries, playerObj.country)
-                    document.getElementById('info_panel_player_details_globalrank').innerHTML = playerObj.globalrank;
-                    document.getElementById('info_panel_player_details_avgrank').innerHTML = playerObj.avgrank;
-                    document.getElementById('info_panel_player_details_wrs').innerHTML = playerObj.wrs;
-                    document.getElementById('info_panel_player_details_records').innerHTML = playerObj.records;
-                    document.getElementById('info_panel_player_details_country').innerHTML = formatCountryFlag(playerObj.country, countryName);
+                    else {
+                        document.getElementById('player_avatar').style = 'visibility:hidden;';
+                    }
+                    const records = playerObj.records || fnRecords.getByPlayer(playerId).length;
+                    const wrs = playerObj.wrs || fnRecords.getByPlayer(playerId, true).length;
+                    const countryName = getCountryName(rawAlpha2Countries, playerObj.country || 'xx');
+                    document.getElementById('info_panel_player_details_globalrank').innerHTML = playerObj.globalrank || 'TBD';
+                    document.getElementById('info_panel_player_details_avgrank').innerHTML = playerObj.avgrank || 'TBD';
+                    document.getElementById('info_panel_player_details_wrs').innerHTML = wrs;
+                    document.getElementById('info_panel_player_details_records').innerHTML = records;
+                    document.getElementById('info_panel_player_details_country').innerHTML = formatCountryFlag(playerObj.country || 'xx', countryName);
                     document.getElementById('info_panel_player_details_country_label').innerHTML = countryName;
+                    document.getElementById('info_panel_player_details_fav').innerHTML = formatFavouriteMapType(playerObj.fav, records);
 
                     const mapsCreated = fnMaps.getByPlayer(playerId);
                     if(mapsCreated.length > 0) {
@@ -177,8 +183,6 @@
                     else if(recordsObj.length > 0) {
                         document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(recordsObj[Math.floor(Math.random() * recordsObj.length)].map_id));
                     }
-
-                    document.getElementById('info_panel_player_details_fav').innerHTML = formatFavouriteMapType(playerObj.fav, playerObj.records);
 
                     //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' RECORDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
                     document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' RECORDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
