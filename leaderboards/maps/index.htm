@@ -4,11 +4,11 @@
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="../../bin/core/fonts.css?v=0.2">
-        <link rel="stylesheet" href="../../bin/core/style.css?v=0.3">
+        <link rel="stylesheet" href="../../bin/core/style.css?v=0.4">
         <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.1">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
-        <script src="../../bin/core/collection.js?v=0.2"></script>
-        <script src="../../bin/core/leaderboards.js?v=0.4"></script>
+        <script src="../../bin/core/collection.js?v=0.3"></script>
+        <script src="../../bin/core/leaderboards.js?v=0.5"></script>
         <script src="../../bin/core/content.js?v=0.1"></script>
         <title id="page_title">Reflex Racing > Maps</title>
     </head>
@@ -117,6 +117,7 @@
 
                 const maxRowsXPage = 300;
                 const directoryLevels = 1;
+                const LAST_UPDATE = '<span class="info-panel-details svg-info-small" style="float:right">'+SVG_ACTIVITY+'&nbsp;'+fnMetadata.getLeaderboardsLastUpdate()+'</span>';
 
                 if(mapId) {
                     const mapObj = fnMaps.getEntryById(mapId);
@@ -166,15 +167,15 @@
                             document.getElementById('info_panel_map_details_creator').style.cursor = 'pointer';
                         }
                         document.getElementById('steam_workshop_link').href = 'http://steamcommunity.com/sharedfiles/filedetails/?id='+mapId;
-                        //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
-                        document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                        //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                        document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
                         generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', mapId, directoryLevels, maxRowsXPage);
                     }
                 }
                 else {
                     document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
-                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS<br>'+BUTTON_TABLE_SHOW_MORE;
-                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+BUTTON_TABLE_SHOW_MORE;
+                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
                     document.getElementById('map_details').classList.add(hideDomClass);
                     document.getElementById('map_showcase').classList.remove(hideDomClass);
                     generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', 'all', directoryLevels, maxRowsXPage);

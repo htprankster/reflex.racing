@@ -336,7 +336,41 @@ const idbKeyMetadata = 'metadata';
 const leaderboardsRecordLightClass = 'leaderboards-record-row-light';
 const leaderboardsRecordDarkClass = 'leaderboards-record-row-dark';
 const hideDomClass = 'hide-dom';
+const mapTypeIconPrefixClass = 'map-type-icon-';
+const tableHeaderSearchColumnClass = 'table-column-search';
+const tableHeaderSearchExpandClass = 'table-header-expand-search';
+const tableHeaderSearchQueriesClass = 'table-header-search-queries';
+const searchExpandBtnClass = 'button-expand-search';
+const searchExpandBtnActiveClass = 'button-expand-search-active';
 const lsiNSFW = 'reflex-racing-nsfw';
+const typeList = [{ type: 'strafe', title: 'Strafe only', svg: SVG_TYPE_STRAFE },
+                { type: 'rocket', title: 'Rocket launcher', svg: SVG_TYPE_ROCKET },
+                { type: 'grenade', title: 'Grenade launcher', svg: SVG_TYPE_GRENADE },
+                { type: 'plasma', title: 'Plasma gun', svg: SVG_TYPE_PLASMA },
+                { type: 'stake', title: 'Stake gun', svg: SVG_TYPE_STAKE },
+                { type: 'tele', title: 'Teleports', svg: SVG_TYPE_TELE },
+                { type: 'jumppad', title: 'Jump pads', svg: SVG_TYPE_JUMPPAD },
+                { type: 'target', title: 'Targets', svg: SVG_TYPE_TARGET },
+                { type: 'turret', title: 'Sentry turrets', svg: SVG_TYPE_TURRET },
+                { type: 'lowgrav', title: 'Low gravity', svg: SVG_TYPE_LOWGRAV },
+                { type: 'surf', title: 'Surfing', svg: SVG_TYPE_SURF },
+                { type: 'team', title: 'Team race', svg: SVG_TYPE_TEAM },
+                //{ type: 'slick', title: 'Slick mod', svg: SVG_TYPE_SLICK },
+                { type: 'checkpoint', title: 'Checkpoints', svg: SVG_TYPE_CHECKPOINT },
+                { type: 'carnage', title: 'Carnage', svg: SVG_TYPE_CARNAGE },
+                { type: 'glitch', title: 'Glitch', svg: SVG_TYPE_GLITCH },
+                { type: 'unfinished', title: 'Unfinished', svg: SVG_TYPE_UNFINISHED }];
+const difficultyList = [{ name: 'Training', title: 'Training maps are used to practice racing techniques and can include multiple finish lines.', code: '1' },
+                        { name: 'Beginner', title: 'Beginner maps are the least difficult of time trials.', code: '2' },
+                        { name: 'Easy', title: 'Easy maps include few obstacles that require clearing for completing the time trial.', code: '3' },
+                        { name: 'Intermediate', title: 'Intermediate maps require some technical knowledge to complete the time trial.', code: '4' },
+                        { name: 'Advanced', title: 'Advanced maps are mostly technical time trials that require a high level of skills to complete.', code: '5' },
+                        { name: 'Expert', title: 'This is the most difficult level of time trials as it requires extensive technical and route knowledge.', code: '6' },
+                        { name: 'Challenge', title: 'Maps made out of a very challenging obstacle course that requires precise execution on every single section.', code: '7' },
+                        { name: 'Unknown', title: 'Unknown map difficulty.', code: '?' },
+                        { name: 'Low effort', title: 'This category includes a low amount of obstacles and/or a short distance to the finish line.', code: 'a' },
+                        { name: 'Medium effort', title: 'Requires some degree of attention to keep the pace going.', code: 'b' },
+                        { name: 'High effort', title: 'Maps of extended length require a high level of attention to keep the pace.', code: 'c' }];
 
 async function fetchDATA(url) {
     try {
@@ -394,24 +428,6 @@ function getKeyLDB(windowLocation) {
 
 function getMapType(id, toObj = true) {
     if(!id) { return false; }
-    const typeList = [{ type: 'strafe', title: 'Strafe only', svg: SVG_TYPE_STRAFE },
-                    { type: 'rocket', title: 'Rocket launcher', svg: SVG_TYPE_ROCKET },
-                    { type: 'grenade', title: 'Grenade launcher', svg: SVG_TYPE_GRENADE },
-                    { type: 'plasma', title: 'Plasma gun', svg: SVG_TYPE_PLASMA },
-                    { type: 'stake', title: 'Stake gun', svg: SVG_TYPE_STAKE },
-                    { type: 'tele', title: 'Teleports', svg: SVG_TYPE_TELE },
-                    { type: 'jumppad', title: 'Jump pads', svg: SVG_TYPE_JUMPPAD },
-                    { type: 'target', title: 'Targets', svg: SVG_TYPE_TARGET },
-                    { type: 'turret', title: 'Sentry turrets', svg: SVG_TYPE_TURRET },
-                    { type: 'lowgrav', title: 'Low gravity', svg: SVG_TYPE_LOWGRAV },
-                    { type: 'surf', title: 'Surfing', svg: SVG_TYPE_SURF },
-                    { type: 'team', title: 'Team race', svg: SVG_TYPE_TEAM },
-                    { type: 'slick', title: 'Slick mod', svg: SVG_TYPE_SLICK },
-                    { type: 'checkpoint', title: 'Checkpoints', svg: SVG_TYPE_CHECKPOINT },
-                    { type: 'carnage', title: 'Carnage', svg: SVG_TYPE_CARNAGE },
-                    { type: 'glitch', title: 'Glitch', svg: SVG_TYPE_GLITCH },
-                    { type: 'unfinished', title: 'Unfinished', svg: SVG_TYPE_UNFINISHED }];
-
     const typeCode = id.toLowerCase();
     let output;
     for(let i = 0; i < typeList.length; i++) {
@@ -425,7 +441,7 @@ function getMapType(id, toObj = true) {
         if(toObj) {
             return output;
         }
-        return '<span class="map-type-icon-'+typeCode+'" title="'+output.title+'">'+output.svg+'</span>';
+        return '<span class="'+mapTypeIconPrefixClass+typeCode+'" title="'+output.title+'">'+output.svg+'</span>';
     }
 
     return false;
@@ -434,56 +450,26 @@ function getMapType(id, toObj = true) {
 function getMapDifficulty(str, toObj = true, asLabel = true) {
     if(!str) { return false; }
     const difficultyCode = str.toLowerCase();
-    const difficultyLevel = parseInt(difficultyCode[0]);
-    let levelTitle = '', levelDescription = '', levelCSSClass = 'leveldfc';
-    switch(difficultyLevel) {
-        case 1:
-            levelTitle = 'Training';
-            levelDescription = 'Training maps are used to practice racing techniques and can include multiple finish lines.'
-            break;
-        case 2:
-            levelTitle = 'Beginner';
-            levelDescription = 'Beginner maps are the least difficult of time trials.';
-            break;
-        case 3:
-            levelTitle = 'Easy';
-            levelDescription = 'Easy maps include few obstacles that require clearing for completing the time trial.';
-            break;
-        case 4:
-            levelTitle = 'Intermediate';
-            levelDescription = 'Intermediate maps require some technical knowledge to complete the time trial.';
-            break;
-        case 5:
-            levelTitle = 'Advanced';
-            levelDescription = 'Advanced maps are mostly technical time trials that require a high level of skills to complete.';
-            break;
-        case 6:
-            levelTitle = 'Expert';
-            levelDescription = 'This is the most difficult level of time trials as it requires extensive technical and route knowledge.'
-            break;
-        case 7:
-            levelTitle = 'Challenge';
-            levelDescription = 'Maps made out of a very challenging obstacle course that requires precise execution on every single section.';
-            break;
-        default: return false;
+    if(difficultyCode.length !== 2) {
+        return false;
     }
 
-    const difficultyCategory = difficultyCode[1];
-    let categoryTitle = '', categoryDescription = '';
-    switch(difficultyCategory) {
-        case 'a':
-            categoryTitle = 'Low effort';
-            categoryDescription = 'This category includes a low amount of obstacles and/or a short distance to the finish line.';
-            break;
-        case 'b':
-            categoryTitle = 'Medium effort';
-            categoryDescription = 'Requires some degree of attention to keep the pace going.';
-            break;
-        case 'c':
-            categoryTitle = 'High effort';
-            categoryDescription = 'Maps of extended length require a high level of attention to keep the pace.';
-            break;
-        default: return false;
+    let difficultyLevel = '', difficultyCategory = '', levelTitle = '', levelDescription = '', levelCSSClass = 'leveldfc';
+    for(let i = 0; i < difficultyList.length; i++) {
+        if(difficultyList[i].code === difficultyCode[0]) {
+            difficultyLevel = difficultyList[i].code;
+            levelTitle = difficultyList[i].name;
+            levelDescription = difficultyList[i].title;
+        }
+        else if(difficultyList[i].code === difficultyCode[1]) {
+            difficultyCategory = difficultyList[i].code;
+            categoryTitle = difficultyList[i].name;
+            categoryDescription = difficultyList[i].title;
+        }
+    }
+
+    if(difficultyLevel === '' || difficultyCategory === '') {
+        return false;
     }
 
     if(toObj) {
@@ -724,7 +710,7 @@ function filterExplicitContent(strNSFW, strCensored, stripColor = false, charlim
     return {str: false, span: false};
 }
 
-function generateTableLDB(data = {maps: [], players: [], records: [], activity: []}, tableId, key = 'player', value = 'all', dirLevels = 0, maxRows = 300, version = 'latest') {
+function generateTableLDB(data = {maps: [], players: [], records: [], activity: []}, tableId, key = 'player', value = 'all', dirLevels = 0, maxRows = 300, version = 'latest', keepExistingHeader = false) {
     let dom = document.getElementById(tableId);
     let table = document.createElement('table');
 
@@ -737,9 +723,9 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
 
     const keyGR = 'globalrank';
     const keyAR = 'avgrank';
-    const keyWR = 'wr';
+    const keyWR = 'wrs';
     const keyRecords = 'records';
-    const keyFavMapType = 'favmaptype';
+    const keyFavMapType = 'fav';
     //const keyTags = 'tags';
     const keyRank = 'rank';
     const keyItemPlayer = 'player_id';
@@ -768,39 +754,48 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
     const dataSortDifficulty = 'table-column-difficulty';
     const dataSortPublished = 'table-column-published';
 
+    const searchTypeText = 'text';
+    const searchTypeDifficulty = 'difficulty';
+    const searchTypeDate = 'date';
+    const searchTypeCategory = 'type';
+    const searchTypeDisable = false;
+
+    const tableKeyMap = 'title';
+    const tableKeyPlayer = 'name';
+
     if(dom) {
         let dHeader, dRecords;
         if(isNaN(value)) {
             if(key === 'player') {
                 dHeader = [
-                    {k: keyGR, v: 'Rank', class: 'table-header-column-globalrank', sort: dataSortGR},
-                    {k: keyWR, v: 'WRs', class: 'table-header-column-wr', sort: dataSortWR},
-                    {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords},
-                    {k: keyItemPlayer, v: 'Player', class: 'table-header-column-key', sort: dataSortKey},
-                    {k: keyAR, v: 'Average Rank', class: 'table-header-column-avgrank', sort: dataSortAR},
-                    {k: keyFavMapType, v: 'Favourite', class: 'table-header-column-favmaptype', sort: dataSortFavMapType}
+                    {k: keyGR, v: 'Rank', class: 'table-header-column-globalrank', sort: dataSortGR, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyGR},
+                    {k: keyWR, v: 'WRs', class: 'table-header-column-wr', sort: dataSortWR, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyWR},
+                    {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyRecords},
+                    {k: keyItemPlayer, v: 'Player', class: 'table-header-column-key', sort: dataSortKey, search: searchTypeText, idbtable: idbKeyPlayers, idbkey: tableKeyPlayer},
+                    {k: keyAR, v: 'Average Rank', class: 'table-header-column-avgrank', sort: dataSortAR, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyAR},
+                    {k: keyFavMapType, v: 'Favourite', class: 'table-header-column-favmaptype', sort: dataSortFavMapType, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyFavMapType}
                     //{k: keyTags, v: 'Tags', class: 'table-header-column-tags', sort: dataSortTags}
                 ];
                 dRecords = fnPlayers.getAll();
             }
             else {
-                if(value === 'mapper') {
+                if(value.includes('mapper')) {
                     dHeader = [
-                        {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords},
-                        {k: keyItemMap, v: 'Map', class: 'table-header-column-key', sort: dataSortKey},
-                        {k: keyMapType, v: 'Race', class: 'table-header-column-type', sort: dataSortMapType},
-                        {k: keyDifficulty, v: 'Difficulty', class: 'table-header-column-difficulty', sort: dataSortDifficulty},
-                        {k: keyPublished, v: 'Date Published', class: 'table-header-column-published', sort: dataSortPublished},
+                        {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyRecords},
+                        {k: keyItemMap, v: 'Map', class: 'table-header-column-key', sort: dataSortKey, search: searchTypeText, idbtable: idbKeyMaps, idbkey: tableKeyMap},
+                        {k: keyMapType, v: 'Race', class: 'table-header-column-type', sort: dataSortMapType, search: searchTypeCategory, idbtable: idbKeyMaps, idbkey: keyMapType},
+                        {k: keyDifficulty, v: 'Difficulty', class: 'table-header-column-difficulty', sort: dataSortDifficulty, search: searchTypeDifficulty, idbtable: idbKeyMaps, idbkey: keyDifficulty},
+                        {k: keyPublished, v: 'Date Published', class: 'table-header-column-published', sort: dataSortPublished, search: searchTypeDisable, idbtable: idbKeyMaps, idbkey: keyPublished},
                     ];
                 }
                 else {
                     dHeader = [
-                        {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords},
-                        {k: keyItemMap, v: 'Map', class: 'table-header-column-key', sort: dataSortKey},
-                        {k: keyMapType, v: 'Race', class: 'table-header-column-type', sort: dataSortMapType},
-                        {k: keyDifficulty, v: 'Difficulty', class: 'table-header-column-difficulty', sort: dataSortDifficulty},
-                        {k: keyMapCreator, v: 'Mapper', class: 'table-header-column-creator', sort: dataSortMapCreator},
-                        {k: keyPublished, v: 'Date Published', class: 'table-header-column-published', sort: dataSortPublished},
+                        {k: keyRecords, v: 'Records', class: 'table-header-column-records', sort: dataSortRecords, search: searchTypeDisable, ididbtableb: idbKeyRecords, idbkey: keyRecords},
+                        {k: keyItemMap, v: 'Map', class: 'table-header-column-key', sort: dataSortKey, search: searchTypeText, idbtable: idbKeyMaps, idbkey: tableKeyMap},
+                        {k: keyMapType, v: 'Race', class: 'table-header-column-type', sort: dataSortMapType, search: searchTypeCategory, idbtable: idbKeyMaps, idbkey: keyMapType},
+                        {k: keyDifficulty, v: 'Difficulty', class: 'table-header-column-difficulty', sort: dataSortDifficulty, search: searchTypeDifficulty, idbtable: idbKeyMaps, idbkey: keyDifficulty},
+                        {k: keyMapCreator, v: 'Mapper', class: 'table-header-column-creator', sort: dataSortMapCreator, search: searchTypeText, idbtable: idbKeyPlayers, idbkey: tableKeyPlayer},
+                        {k: keyPublished, v: 'Date Published', class: 'table-header-column-published', sort: dataSortPublished, search: searchTypeDisable, idbtable: idbKeyMaps, idbkey: keyPublished},
                     ];
                 }
                 dRecords = fnMaps.getAll();
@@ -808,11 +803,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
         }
         else {
             dHeader = [
-                {k: keyRank, v: 'Rank', class: 'table-header-column-rank', sort: dataSortRank},
-                {k: (key === 'player' ? keyItemMap : keyItemPlayer), v: (key === 'player' ? 'Map' : 'Player'), class: 'table-header-column-key', sort: dataSortKey},
-                {k: keyScore, v: 'Time {m:s.ms}', class: 'table-header-column-score', sort: dataSortScore},
-                {k: keyTopSpeed, v: 'Top Speed {ups}', class: 'table-header-column-topspeed', sort: dataSortTopSpeed},
-                {k: keyDistance, v: 'Distance', class: 'table-header-column-distance', sort: dataSortDistance}
+                {k: keyRank, v: 'Rank', class: 'table-header-column-rank', sort: dataSortRank, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyRank},
+                {k: (key === 'player' ? keyItemMap : keyItemPlayer), v: (key === 'player' ? 'Map' : 'Player'), class: 'table-header-column-key', sort: dataSortKey, search: searchTypeText, idbtable: (key === 'player' ? idbKeyMaps : idbKeyPlayers), idbkey: (key === 'player' ? tableKeyMap : tableKeyPlayer)},
+                {k: keyScore, v: 'Time {m:s.ms}', class: 'table-header-column-score', sort: dataSortScore, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyScore},
+                {k: keyTopSpeed, v: 'Top Speed {ups}', class: 'table-header-column-topspeed', sort: dataSortTopSpeed, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyTopSpeed},
+                {k: keyDistance, v: 'Distance', class: 'table-header-column-distance', sort: dataSortDistance, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyDistance}
             ];
             dRecords = (key === 'player' ? fnRecords.getByPlayer(value) : fnRecords.getByMap(value));
         }
@@ -820,17 +815,44 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
         const HEADER = dHeader;
         const RECORDS = dRecords;
 
-        let i = 0;
-        let thead = table.createTHead();
-        thead.id = theadId;
-        thead.className = 'rc-leaderboards-header';
-        let cell, row = thead.insertRow(0);
-        for(i = 0; i < HEADER.length; i++) {
-            if(HEADER[i].sort) {
-                row.innerHTML += '<th class="'+HEADER[i].class+'"><button class="btn-text" onclick="sortTableLDB(this, \''+theadId+'\', \''+tbodyId+'\')" data-sort="'+HEADER[i].sort+'">'+HEADER[i].v+' '+SVG_ORDER+'</button></th>';
+        let deletedRowsOffset = 0;
+        let i = 0, cell, row, thead, theadStyle;
+        if(keepExistingHeader) {
+            thead = document.getElementById(theadId);
+            if(typeof keepExistingHeader === 'string' && thead) {
+                theadStyle = thead.getAttribute('style');
+                thead = false;
             }
-            else {
-                row.innerHTML += '<th class="'+HEADER[i].class+'"><button class="btn-text">'+HEADER[i].v+' '+SVG_ORDER+'</button></th>';
+        }
+
+        if(thead) {
+            dom.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+            dom.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
+            let sortBtns = thead.getElementsByClassName('btn-sort');
+            for(let s = 0; s < sortBtns.length; s++) {
+                let sortsetup = atob(sortBtns[s].getAttribute('sortsetup')).split('$$$');
+                sortBtns[s].setAttribute('onclick', "sortTableLDB(this, '"+sortsetup[0]+"', '"+sortsetup[1]+"')");
+                sortBtns[s].innerHTML = sortsetup[2];
+            }
+            table.innerHTML = thead.outerHTML;
+        }
+        else {
+            thead = table.createTHead();
+            thead.id = theadId;
+            thead.className = 'rc-leaderboards-header';
+            if(theadStyle) {
+                thead.style = theadStyle;
+            }
+            row = thead.insertRow(0);
+            const b64args = btoa([tableId,key,value,dirLevels,maxRows,version].join(','));
+            for(i = 0; i < HEADER.length; i++) {
+                const tableSearchDOM = (HEADER[i].search ? inputSearchDOM(theadId, HEADER[i].sort, HEADER[i].search, HEADER[i].idbtable, HEADER[i].idbkey, b64args) : '');
+                if(HEADER[i].sort) {
+                    row.innerHTML += '<th class="'+HEADER[i].class+'"><button class="btn-text btn-sort" sortsetup="'+btoa(theadId+'$$$'+tbodyId+'$$$'+(HEADER[i].v+' '+SVG_ORDER))+'" onclick="sortTableLDB(this, \''+theadId+'\', \''+tbodyId+'\')" data-sort="'+HEADER[i].sort+'">'+HEADER[i].v+' '+SVG_ORDER+'</button>'+tableSearchDOM+'</th>';
+                }
+                else {
+                    row.innerHTML += '<th class="'+HEADER[i].class+'"><button class="btn-text">'+HEADER[i].v+' '+SVG_ORDER+'</button>'+tableSearchDOM+'</th>';
+                }
             }
         }
 
@@ -838,11 +860,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
         tbody.id = tbodyId;
         tbody.setAttribute('max_rows', maxRows);
         for(i = 0; i < RECORDS.length; i++) {
-            row = tbody.insertRow(i);
-            row.className = 'cell-leaderboards-row '+(i % 2 === 0 ? leaderboardsRecordDarkClass : leaderboardsRecordLightClass);
+            row = tbody.insertRow(i-deletedRowsOffset);
+            row.className = 'cell-leaderboards-row '+((i-deletedRowsOffset) % 2 === 0 ? leaderboardsRecordDarkClass : leaderboardsRecordLightClass);
             let aRank = '', aScore = '', aTopSpeed = '', aDistance = '';
 
-            if(i >= maxRows && maxRows > 0) {
+            if((i-deletedRowsOffset) >= maxRows && maxRows > 0) {
                 row.classList.add(hideDomClass);
             }
 
@@ -941,6 +963,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         break;
                     case keyMapCreator:
                         const mapperObj = fnPlayers.getEntryById(recordItem);
+                        if(!mapperObj) {
+                            tbody.lastChild.remove();
+                            deletedRowsOffset++;
+                            break;
+                        }
                         const mapperName = filterExplicitContent(mapperObj.name, mapperObj.censored_name, false, 50);
                         cell.className = dataSortMapCreator;
                         cell.setAttribute('sort-value', (mapperName.str || '?').toLowerCase());
@@ -977,6 +1004,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         let mapObj = RECORDS[i];
                         if(!mapObj.title) {
                             mapObj = fnMaps.getEntryById(mapId);
+                            if(!mapObj) {
+                                tbody.lastChild.remove();
+                                deletedRowsOffset++;
+                                break;
+                            }
                         }
 
                         const mapTitle = filterExplicitContent(mapObj.title, mapObj.censored_title, false, 50);
@@ -991,6 +1023,11 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         let playerObj = RECORDS[i];
                         if(!playerObj.name) {
                             playerObj = fnPlayers.getEntryById(playerId);
+                            if(!playerObj) {
+                                tbody.lastChild.remove();
+                                deletedRowsOffset++;
+                                break;
+                            }
                         }
                         const playerName = filterExplicitContent(playerObj.name, playerObj.censored_name, false, 50);
                         cell.className = dataSortKey;
@@ -1046,7 +1083,8 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
         if(maxRows > 0) {
             let pageNavDiv = dom.parentNode.getElementsByClassName('table-page-nav');
             if(pageNavDiv.length > 0) {
-                if(RECORDS.length > maxRows) {
+                if((RECORDS.length-deletedRowsOffset) > maxRows) {
+                    pageNavDiv[0].outerHTML = BUTTON_TABLE_PAGE_NAV;
                     let startPageBtn = pageNavDiv[0].getElementsByClassName('table-page-start')[0];
                     let prevPageBtn = pageNavDiv[0].getElementsByClassName('table-page-prev')[0];
                     let nextPageBtn = pageNavDiv[0].getElementsByClassName('table-page-next')[0];
@@ -1057,10 +1095,10 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                     prevPageBtn.setAttribute('onclick', 'pageLDBRows(this, \"prev\", \"'+tableId+'\", '+maxRows+')');
                     nextPageBtn.setAttribute('onclick', 'pageLDBRows(this, \"next\", \"'+tableId+'\", '+maxRows+')');
                     endPageBtn.setAttribute('onclick', 'pageLDBRows(this, \"end\", \"'+tableId+'\", '+maxRows+')');
-                    pageIndexSpan.innerHTML = indexPageLDB(1, Math.ceil(RECORDS.length/maxRows));
+                    pageIndexSpan.innerHTML = indexPageLDB(1, Math.ceil((RECORDS.length-deletedRowsOffset)/maxRows));
                 }
                 else {
-                    pageNavDiv[0].innerHTML = '<span class="info-panel-details table-page-index svg-info-small">Showing '+RECORDS.length+' item'+(RECORDS.length !== 1 ? 's' : '')+'</span>';
+                    pageNavDiv[0].innerHTML = '<span class="info-panel-details table-page-index svg-info-small">Showing '+(RECORDS.length-deletedRowsOffset)+' item'+((RECORDS.length-deletedRowsOffset) !== 1 ? 's' : '')+'</span>';
                 }
             }
         }
@@ -1130,13 +1168,339 @@ function pageLDBRows(event, direction, tableId, maxRows) {
         }
 
         let table = document.getElementById(tableId);
-        table.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
-        table.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
+        table.parentNode.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+        table.parentNode.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
 
         pageIndexSpan = event.parentNode.getElementsByClassName('table-page-index')[0];
         pageIndexSpan.innerHTML = indexPageLDB((Math.ceil(index/maxRows)+1), maxPages);
     }
     return;
+}
+
+function inputSearchDOM(headerId, tdColumn, searchType, idbTable, idbKey, b64args) {
+    let i = 0;
+    let selectionDOM = '';
+    let operator = 'or';
+    let hidden = false;
+    let id, domId = new Array();
+    const searchDOMId = Math.random().toString(36).substring(2,9);
+    switch(searchType) {
+        case 'difficulty':
+            hidden = true;
+            selectionDOM = '<div class="'+tableHeaderSearchQueriesClass+'"><ul>';
+            for(i = 0; i < difficultyList.length; i++) {
+                id = Math.random().toString(36).substring(2,9);
+                domId.push(id);
+                selectionDOM += '<li><label><input id="'+id+'" type="checkbox" value="'+difficultyList[i].code+'" onchange="editSearchQueryLDB(this, \''+searchDOMId+'\')">[<span class="leveldfc'+difficultyList[i].code+'">'+difficultyList[i].code+'</span>] '+difficultyList[i].name+'</label></li>';
+            }
+            selectionDOM += '</ul></div><ul>'+
+                            '<li><button class="btn-text" onclick="toggleSearchQueryOperator(this, \''+searchDOMId+'\')">Match: Any</button></li>'+
+                            '</ul>';
+            selectionDOM += '<ul>'+
+                            '<li><button class="btn-text" onclick="resetSearchFiltersDOM(\''+searchDOMId+'\', [\''+domId.join("','")+'\']);">Reset</button></li>'+
+                            '</ul>';
+            break;
+        case 'date': selectionDOM = ' '; break;
+        case 'type': selectionDOM = ' ';
+            hidden = true;
+            selectionDOM = '<div class="'+tableHeaderSearchQueriesClass+'"><ul>';
+            for(i = 0; i < typeList.length; i++) {
+                id = Math.random().toString(36).substring(2,9);
+                domId.push(id);
+                selectionDOM += '<li><label><input id="'+id+'" type="checkbox" value="'+typeList[i].type+'" onchange="editSearchQueryLDB(this, \''+searchDOMId+'\')"><span class="'+mapTypeIconPrefixClass+typeList[i].type.toLowerCase()+'">'+typeList[i].svg+'</span> '+typeList[i].title+'</label></li>';
+            }
+            selectionDOM += '</ul></div><ul>'+
+                            '<li><button class="btn-text" onclick="toggleSearchQueryOperator(this, \''+searchDOMId+'\')">Match: Any</button></li>'+
+                            '</ul>';
+            selectionDOM += '<ul>'+
+                            '<li><button class="btn-text" onclick="resetSearchFiltersDOM(\''+searchDOMId+'\', [\''+domId.join("','")+'\']);">Reset</button></li>'+
+                            '</ul>';
+            break;
+        default: break;
+    }
+
+    return '&nbsp;<button class="btn-text '+searchExpandBtnClass+'" onclick="resizeSearchHeader(\''+headerId+'\')">'+SVG_SEARCH+'</button>&nbsp;<div class="'+tableHeaderSearchExpandClass+(hidden ? ' '+hideDomClass : '')+'">'+selectionDOM+'<input id="'+searchDOMId+'" class="'+tableHeaderSearchColumnClass+(selectionDOM !== '' ? ' '+hideDomClass : '')+'" type="text" placeholder="Search..." value="" column="'+tdColumn+'" idbtable="'+idbTable+'" idbkey="'+idbKey+'" b64args="'+b64args+'" operator="'+operator+'" onchange="searchLDBRows(this)"></div>';
+}
+
+function resizeSearchHeader(headerId) {
+    let dom = document.getElementById(headerId);
+    if(dom) {
+        let header = dom.getElementsByClassName(tableHeaderSearchExpandClass);
+        if(header.length > 0) {
+            for(let i = 0; i < header.length; i++) {
+                let queries = header[i].getElementsByClassName(tableHeaderSearchQueriesClass);
+                if(queries.length > 0) {
+                    if(header[i].classList.contains(hideDomClass)) {
+                        header[i].classList.remove(hideDomClass);
+                    }
+                    else {
+                        header[i].classList.add(hideDomClass);
+                    }
+                }
+            }
+        }
+
+        //dom.parentNode.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+        //dom.parentNode.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    return;
+}
+
+function resetSearchFiltersDOM(inputDomId, ids = []) {
+    let confirm = false;
+    for(let i = 0; i < ids.length; i++) {
+        let dom = document.getElementById(ids[i]);
+        if(dom) {
+            if(dom.checked) {
+                confirm = true;
+                dom.checked = false;
+                dom.removeAttribute('checked');
+            }
+        }
+    }
+
+    if(confirm) {
+        let inputDom = document.getElementById(inputDomId);
+        inputDom.value = '';
+        inputDom.setAttribute('value', '');
+        inputDom.onchange();
+    }
+    return;
+}
+
+function toggleSearchQueryOperator(event, searchDOMId) {
+    let dom = document.getElementById(searchDOMId);
+    switch(dom.getAttribute('operator')) {
+        case 'and':
+            dom.setAttribute('operator', 'or');
+            event.innerHTML = 'Match: Any';
+            break;
+        case 'or':
+        default:
+            dom.setAttribute('operator', 'and');
+            event.innerHTML = 'Match: All';
+            break;
+    }
+
+    if(dom.value) {
+        dom.onchange();
+    }
+    return;
+}
+
+function editSearchQueryLDB(event, searchDOMId, query = [], add = 'auto') {
+    let dom = document.getElementById(searchDOMId);
+    if(add === 'auto') {
+        add = false;
+        if(event.checked) {
+            add = true;
+        }
+    }
+
+    if(query.length === 0 && event.value) {
+        query.push(event.value);
+    }
+
+    if(dom && query.length > 0) {
+        let i = 0;
+        let newQuery = new Array();
+        let currentQuery = (dom.value !== '' ? dom.value.split(',') : []);
+
+        if(currentQuery.length > 0) {
+            for(i = 0; i < query.length; i++) {
+                let existingItemIndex = currentQuery.indexOf(query[i].toString());
+                if(add && existingItemIndex === -1) {
+                    currentQuery.push(query[i]);
+                }
+                else if(!add && existingItemIndex >= 0) {
+                    currentQuery.splice(existingItemIndex, 1);
+                }
+            }
+
+            if(currentQuery.length > 0) {
+                newQuery = currentQuery;
+            }
+        }
+        else {
+            newQuery = query;
+        }
+
+        if(event.checked) {
+            event.setAttribute('checked','');
+        }
+        else {
+            event.removeAttribute('checked');
+        }
+        dom.setAttribute('value', newQuery.join(','));
+        dom.onchange();
+        return true;
+    }
+    return false;
+}
+
+async function searchLDBRows(event) {
+    // DOM-based search made to keep me warm during winter & to support really outdated browser versions.
+    // function getActiveSearchQueries(node) {
+    //     let activeSearches = 0;
+    //     const queryDom = node.getElementsByClassName(tableHeaderSearchColumnClass);
+    //     for(let a = 0; a < queryDom.length; a++) {
+    //         if(queryDom[a].value !== '') {
+    //             activeSearches++;
+    //         }
+    //     }
+    //     return activeSearches;
+    // }
+
+    // const searchClass = 'search-result';
+    // const columnName = event.getAttribute('column');
+    // const operator = event.getAttribute('operator') || 'or';
+    // let columnElement = document.getElementsByClassName(columnName);
+    // if(columnElement.length > 0) {
+    //     const queries = (event.value !== '' ? event.value.split(',') : []);
+    //     for(let i = 0; i < columnElement.length; i++) {
+    //         let countMatches = 0;
+    //         if(queries.length > 0) {
+    //             const sortValue = columnElement[i].getAttribute('sort-value');
+    //             const sortType = columnElement[i].getAttribute('sort-type') || 'string';
+    //             if(sortValue) {
+    //                 for(let j = 0; j < queries.length; j++) {
+    //                     if(sortType === 'string' && sortValue.includes(queries[j])) {
+    //                         countMatches++;
+    //                         if(operator === 'or') {
+    //                             columnElement[i].classList.add(searchClass);
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+
+    //         if(countMatches === 0) {
+    //             columnElement[i].classList.remove(searchClass);
+    //         }
+    //         else if(operator !== 'or') {
+    //             if(countMatches === queries.length) {
+    //                 columnElement[i].classList.add(searchClass);
+    //             }
+    //             else {
+    //                 columnElement[i].classList.remove(searchClass);
+    //             }
+    //         }
+
+    //         const currentSearches = columnElement[i].parentNode.getElementsByClassName(searchClass).length;
+    //         if(currentSearches === getActiveSearchQueries(columnElement[i].parentNode.parentNode.parentNode.children[0]) ||
+    //             (currentSearches > 0 && queries.length === 0)) {
+    //             columnElement[i].parentNode.classList.remove(hideDomClass);
+    //         }
+    //         else {
+    //             columnElement[i].parentNode.classList.add(hideDomClass);
+    //         }
+    //     }
+    // }
+
+    // Object-based search & leaderboards regeneration
+    function findObjByProperty(obj, queries) {
+        let output = new Array();
+        for(let i = 0; i < obj.length; i++) {
+            let countMatches = 0;
+
+            for(let j = 0; j < queries.length; j++) {
+                const key = queries[j][0];
+                const query = (['difficulty','type'].includes(key) ? queries[j][1].split(',') : [queries[j][1]]) ;
+                const operator = queries[j][2];
+                let subMatches = 0;
+
+                for(let k = 0; k < query.length; k++) {
+                    if((obj[i][key] && obj[i][key].toString().toLowerCase().includes(query[k])) ||
+                        (obj[i].custom && obj[0].custom[key] && obj[i].custom[key].toString().toLowerCase().includes(query[k]))) {
+                        subMatches++;
+                        if(operator === 'or') {
+                            break;
+                        }
+                    }
+                }
+
+                if(operator === 'or') {
+                    if(subMatches > 0) {
+                        countMatches++;
+                    }
+                }
+                else if(subMatches === query.length) {
+                    countMatches++;
+                }
+            }
+
+            if(countMatches === queries.length) {
+                output.push(obj[i]);
+            }
+        }
+        return output;
+    }
+
+    function addQueryMapCreator(args) {
+        for(let i = 0; i < args.length; i++) {
+            if(args[i].includes('mapper')) {
+                return ['creator',args[i].split(':')[1],'and'];
+            }
+        }
+        return [];
+    }
+
+    const rawMaps = await getIDBDataset(idbKeyMaps, true);
+    const rawPlayers = await getIDBDataset(idbKeyPlayers, true);
+    const rawRecords = await getIDBDataset(idbKeyRecords, true);
+    const rawActivity = await getIDBDataset(idbKeyActivity, true);
+    const tableArgs = atob(event.getAttribute('b64args')).split(',');
+    const queryCreator = addQueryMapCreator(tableArgs);
+    let matchingMaps = rawMaps;
+    let matchingPlayers = rawPlayers;
+    let matchingRecords = rawRecords;
+    let matchingActivity = rawActivity;
+    let queries = {};
+    const searchQueries = document.getElementsByClassName(tableHeaderSearchColumnClass);
+    for(let i = 0; i < searchQueries.length; i++) {
+        const table = searchQueries[i].getAttribute('idbtable');
+        const key = searchQueries[i].getAttribute('idbkey');
+        const operator = searchQueries[i].getAttribute('operator');
+        const query = searchQueries[i].value.toLowerCase();
+        if(query) {
+            if(!queries[table]) {
+                queries[table] = new Array();
+            }
+            queries[table].push([key,query,operator]);
+        }
+
+        let searchStatusBtn = searchQueries[i].parentNode.parentNode.getElementsByClassName(searchExpandBtnClass);
+        for(let j = 0; j < searchStatusBtn.length; j++) {
+            if(query) {
+                searchStatusBtn[j].classList.add(searchExpandBtnActiveClass);
+            }
+            else {
+                searchStatusBtn[j].classList.remove(searchExpandBtnActiveClass);
+            }
+        }
+    }
+
+    if(queryCreator.length > 0) {
+        if(!queries[idbKeyMaps]) {
+            queries[idbKeyMaps] = new Array();
+        }
+        queries[idbKeyMaps].push(queryCreator);
+    }
+
+    const results = (Object.keys(queries).length > 0);
+    if(results) {
+        if(queries[idbKeyMaps]) { matchingMaps = findObjByProperty(rawMaps, queries[idbKeyMaps]); }
+        if(queries[idbKeyPlayers]) { matchingPlayers = findObjByProperty(rawPlayers, queries[idbKeyPlayers]); }
+        if(queries[idbKeyRecords]) { matchingRecords = findObjByProperty(rawRecords, queries[idbKeyRecords]); }
+        if(queries[idbKeyActivity]) { matchingActivity = findObjByProperty(rawActivity, queries[idbKeyActivity]); }
+    }
+    
+    if(event.type === 'text') {
+        event.setAttribute('value', event.value);
+    }
+
+    return generateTableLDB({maps: matchingMaps, players: matchingPlayers, records: matchingRecords, activity: matchingActivity}, tableArgs[0], tableArgs[1], tableArgs[2], tableArgs[3], tableArgs[4], tableArgs[5], (results || 'style'));
 }
 
 function changeShowcaseView(event, panel) {
@@ -1178,8 +1542,10 @@ function sortTableLDB(event, theadId, tbodyId, asc = -1) {
         let domSortButtons = domTHead.getElementsByTagName('button');
         if(domSortButtons.length > 0) {
             for(i = 0; i < domSortButtons.length; i++) {
-                domSortButtons[i].setAttribute('onclick', 'sortTableLDB(this, \''+theadId+'\', \''+tbodyId+'\')');
-                domSortButtons[i].innerHTML = domSortButtons[i].textContent+' '+SVG_ORDER;
+                if(domSortButtons[i].getAttribute('onclick').includes('sortTableLDB')) {
+                    domSortButtons[i].setAttribute('onclick', 'sortTableLDB(this, \''+theadId+'\', \''+tbodyId+'\')');
+                    domSortButtons[i].innerHTML = domSortButtons[i].textContent+' '+SVG_ORDER;
+                }
             }
         }
     }
@@ -1247,8 +1613,8 @@ function sortTableLDB(event, theadId, tbodyId, asc = -1) {
             sortedTable.push(splitDom.join('<td'));
         }
         domTBody.innerHTML = sortedTable.join('');
-        domTBody.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
-        domTBody.parentNode.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
+        domTBody.parentNode.parentNode.scrollIntoView({ behavior: 'smooth', inline: 'nearest' });
+        domTBody.parentNode.parentNode.parentNode.scrollTo({ top: 0, behavior: 'smooth' });
         let pageIndexDom = domTBody.parentNode.parentNode.getElementsByClassName('table-page-index');
         if(pageIndexDom.length > 0) {
             let pageIndex = pageIndexDom[0].innerHTML.split('/');
@@ -1340,7 +1706,7 @@ function formatMapTypeLine(typeList) {
     if(output.length > 0) {
         return output.join('&nbsp;');
     }
-    return '<span class="map-type-icon-unknown" title="Unknown map type">'+SVG_TYPE_UNKNOWN+'</span>';
+    return '<span class="'+mapTypeIconPrefixClass+'unknown" title="Unknown map type">'+SVG_TYPE_UNKNOWN+'</span>';
 }
 
 function formatMapDifficultyLine(difficultyObj, asLabel = true) {
@@ -1349,7 +1715,7 @@ function formatMapDifficultyLine(difficultyObj, asLabel = true) {
         return difficulty;
     }
 
-    return '<span class="map-type-icon-unknown" title="Unknown map difficulty">'+SVG_TYPE_UNKNOWN+'</span>';
+    return '<span class="'+mapTypeIconPrefixClass+'unknown" title="Unknown map difficulty">'+SVG_TYPE_UNKNOWN+'</span>';
 }
 
 function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
@@ -1367,7 +1733,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
             output.push('strafe');
         }
         else {
-            output.push('<span title="Strafing" class="map-type-icon-strafe">'+SVG_TYPE_STRAFE+'</span>');
+            output.push('<span title="Strafing" class="'+mapTypeIconPrefixClass+'strafe">'+SVG_TYPE_STRAFE+'</span>');
         }
     }
 
@@ -1376,7 +1742,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
             output.push('rocket');
         }
         else {
-            output.push('<span title="Rocket jumps" class="map-type-icon-rocket">'+SVG_TYPE_ROCKET+'</span>');
+            output.push('<span title="Rocket jumps" class="'+mapTypeIconPrefixClass+'rocket">'+SVG_TYPE_ROCKET+'</span>');
         }
     }
 
@@ -1385,7 +1751,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
             output.push('plasma');
         }
         else {
-            output.push('<span title="Plasma climb" class="map-type-icon-plasma">'+SVG_TYPE_PLASMA+'</span>');
+            output.push('<span title="Plasma climb" class="'+mapTypeIconPrefixClass+'plasma">'+SVG_TYPE_PLASMA+'</span>');
         }
     }
 
@@ -1394,7 +1760,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
             output.push('grenade');
         }
         else {
-            output.push('<span title="Grenade jumps" class="map-type-icon-grenade">'+SVG_TYPE_GRENADE+'</span>');
+            output.push('<span title="Grenade jumps" class="'+mapTypeIconPrefixClass+'grenade">'+SVG_TYPE_GRENADE+'</span>');
         }
     }
 
@@ -1405,7 +1771,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
     if(asLabel) {
         return '?';
     }
-    return '<span title="No preference" class="map-type-icon-unknown">'+SVG_TYPE_UNKNOWN+'</span>';
+    return '<span title="No preference" class="'+mapTypeIconPrefixClass+'unknown">'+SVG_TYPE_UNKNOWN+'</span>';
 }
 
 async function deleteIDB() {
@@ -1518,12 +1884,12 @@ async function setIDBDataset(index, dataset) {
     return;
 }
 
-async function getIDBDataset(key) {
-    let latestVersion = false;
+async function getIDBDataset(key, idbOnly = false) {
+    let latestVersion = idbOnly;
     const lastUpdateKey = 'reflex-racing-ldb-lastupdate';
     const lastLDBUpdate = localStorage.getItem(lastUpdateKey);
     let idbUpdates = {};
-    if(lastLDBUpdate) {
+    if(lastLDBUpdate && !idbOnly) {
         idbUpdates = JSON.parse(lastLDBUpdate);
         if(!isNaN(idbUpdates[key])) {
             const lastUpdate = new Date(idbUpdates[key]);
@@ -1543,31 +1909,31 @@ async function getIDBDataset(key) {
         }
     }
 
-    let fetchURL = '';
-    switch(key) {
-        case idbKeyMaps:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_maps.json';
-            break;
-        case idbKeyPlayers:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_players.json';
-            break;
-        case idbKeyRecords:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_records.json';
-            break;
-        case idbKeyActivity:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_activity.json';
-            break;
-        case idbKeyRSS:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/rss/rss.json';
-            break;
-        case idbKeyMetadata:
-            fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/metadata.json';
-            break;
-        default: return false;
-    }
-
     let dataset = false;
     if(!latestVersion || !indexedDB) {
+        let fetchURL = '';
+        switch(key) {
+            case idbKeyMaps:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_maps.json';
+                break;
+            case idbKeyPlayers:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_players.json';
+                break;
+            case idbKeyRecords:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_records.json';
+                break;
+            case idbKeyActivity:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_activity.json';
+                break;
+            case idbKeyRSS:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/rss/rss.json';
+                break;
+            case idbKeyMetadata:
+                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/metadata.json';
+                break;
+            default: return false;
+        }
+
         dataset = await fetchDATA(fetchURL);
         if(dataset.length > 0) {
             setIDBDataset(key, dataset);
