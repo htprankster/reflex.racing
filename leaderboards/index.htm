@@ -4,11 +4,11 @@
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="../static/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="../bin/core/fonts.css?v=0.1">
-        <link rel="stylesheet" href="../bin/core/style.css?v=0.4">
-        <link id="theme" rel="stylesheet" href="../bin/core/themedark.css?v=0.1">
-        <script src="../bin/core/collection.js?v=0.3"></script>
-        <script src="../bin/core/leaderboards.js?v=0.5"></script>
-        <script src="../bin/core/content.js?v=0.1"></script>
+        <link rel="stylesheet" href="../bin/core/style.css?v=0.5">
+        <link id="theme" rel="stylesheet" href="../bin/core/themedark.css?v=0.2">
+        <script src="../bin/core/collection.js?v=0.4"></script>
+        <script src="../bin/core/leaderboards.js?v=0.6"></script>
+        <script src="../bin/core/content.js?v=0.2"></script>
         <title>Reflex Racing > Leaderboards</title>
     </head>
     <body style="cursor:default">
@@ -35,7 +35,7 @@
             <div class="rc-info-panel">
                 <div class="info-panel-summary">
                     <span id="info_panel_maps_title" class="info-panel-title"></span>
-                    <span class="info-panel-details svg-info-small"><a id="info_panel_show_all_maps" href="./maps/"></a></span>
+                    <span class="info-panel-details svg-info-small"><button id="info_panel_show_all_maps" class="btn-text" onclick="changeSlideshowContent(this, 1)"></button></span>
                 </div>
                 <div class="slideshow-panel-controls">
                     <span id="slideshow_panel_controls_status" class="btn-flat btn-flat-info">LOADING</span>
@@ -57,14 +57,14 @@
             <div class="rc-info-panels-left">
                 <div class="rc-info-panel info-panel-column rc-activity-panel">
                     <div class="info-panel-card">
-                        <div id="info_panel_activity_header" class="info-panel-scroll-header">
-                            <span id="info_panel_activity_title" class="info-panel-title">ACTIVITY</span>
-                            <span id="info_panel_activity_header_panel" class="info-panel-details svg-info-small">Loading</span>
-                            <ul id="info_panel_activity_tabs" class="info-panel-row-details info-panel-row-activity">
+                        <div id="info_panel_activity_left_header" class="info-panel-scroll-header">
+                            <span id="info_panel_activity_left_title" class="info-panel-title">ACTIVITY</span>
+                            <span id="info_panel_activity_left_header_panel" class="info-panel-details svg-info-small">Loading</span>
+                            <ul id="info_panel_activity_left_tabs" class="info-panel-row-details info-panel-row-activity">
                                 <li><span class="info-panel-activity-grid-left"><span>Maps</span><span>Players</span></span><span class="info-panel-activity-grid-right">Time {<i>m:s.ms</i>}</span></li>
                             </ul>
                         </div>
-                        <ul id="info_panel_activity_data" class="info-panel-row-details info-panel-row-activity"></ul>
+                        <ul id="info_panel_activity_left_data" class="info-panel-row-details info-panel-row-activity"></ul>
                     </div>
                 </div>
                 <div class="rc-info-panel info-panel-column">
@@ -80,6 +80,18 @@
                 </div>
             </div>
             <div class="rc-info-panels-right">
+                <div id="secondary_activity" class="rc-info-panel info-panel-column rc-activity-panel hide-dom">
+                    <div class="info-panel-card">
+                        <div id="info_panel_activity_right_header" class="info-panel-scroll-header">
+                            <span id="info_panel_activity_right_title" class="info-panel-title">ACTIVITY</span>
+                            <span id="info_panel_activity_right_header_panel" class="info-panel-details svg-info-small">Loading</span>
+                            <ul id="info_panel_activity_right_tabs" class="info-panel-row-details info-panel-row-activity">
+                                <li><span class="info-panel-activity-grid-left"><span>Maps</span><span>Players</span></span><span class="info-panel-activity-grid-right">Time {<i>m:s.ms</i>}</span></li>
+                            </ul>
+                        </div>
+                        <ul id="info_panel_activity_right_data" class="info-panel-row-details info-panel-row-activity"></ul>
+                    </div>
+                </div>
                 <div class="rc-info-panel info-panel-column rc-rss-panel">
                     <div class="info-panel-card">
                         <div id="info_panel_feed_header" class="info-panel-scroll-header">
@@ -91,7 +103,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="rc-info-panel info-panel-column">
+                <div id="settings_wrapper" class="rc-info-panel info-panel-column">
                     <div class="info-panel-card">
                         <span id="info_panel_settings_title" class="info-panel-title">SETTINGS</span>
                         <ul class="info-panel-row-details">
@@ -125,7 +137,11 @@
             document.getElementById('record_count').innerHTML = 'Loading';
             //Header [Latest Maps]
             document.getElementById('info_panel_maps_title').innerHTML = SVG_LATEST_MAP+' LATEST MAPS';
-            document.getElementById('info_panel_show_all_maps').innerHTML = SVG_OPEN_LINK_SMALL+' View all';
+            document.getElementById('info_panel_show_all_maps').innerHTML = SVG_UPDATE_SLIDESHOW+' '+LABEL_LEGACY_VERSION;
+            const default_ruleset = (supportedRulesets.length > 1 ? parseInt(localStorage.getItem(lsiDefaultRuleset)) || 0 : 0);
+            // document.getElementById('info_panel_show_all_maps').innerHTML = SVG_UPDATE_SLIDESHOW+' '+supportedRulesets[default_ruleset].name+' records';
+            // document.getElementById('info_panel_show_all_maps').title = supportedRulesets[default_ruleset].description;
+            // document.getElementById('info_panel_show_all_maps').setAttribute('onclick', 'changeSlideshowContent(this, '+(default_ruleset === 0 ? 1 : 0)+')');
             //Header [Slideshow controls]
             document.getElementById('slideshow_panel_controls_rewind').innerHTML = SVG_REWIND;
             document.getElementById('slideshow_panel_controls_play').innerHTML = SVG_PAUSE;
@@ -134,12 +150,13 @@
             document.getElementById('info_panel_resources_links').innerHTML = '<a href="/wiki/reflex-racing-wiki">'+SVG_WIKI+' Wiki</a>'+
                 '<a href="/wiki/getting-started">'+SVG_GEAR+' Getting started</a>'+
                 '<a href="/wiki/movement/menu">'+SVG_WRENCH+' Movement guide</a>';
-            //Panel [Activity]
-            document.getElementById('info_panel_activity_title').innerHTML = SVG_ACTIVITY+' ACTIVITY';
-            document.getElementById('info_panel_activity_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
+            //Panel [Activity Left]
+            document.getElementById('info_panel_activity_left_title').innerHTML = SVG_ACTIVITY+' ACTIVITY';// ('+supportedRulesets[0].name.toUpperCase()+')';
+            document.getElementById('info_panel_activity_left_title').title = supportedRulesets[0].description;
+            document.getElementById('info_panel_activity_left_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
                 '<button activityClassName="improved-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Improved rankings</button>'+
                 '<button activityClassName="dropped-ranking" onclick="displayActivity(this, true)" class="btn-text" disabled>'+SVG_TOGGLE_ENABLED+' Dropped rankings</button>';
-            document.getElementById('info_panel_activity_data').innerHTML = LOADING_GIF_L1;
+            document.getElementById('info_panel_activity_left_data').innerHTML = LOADING_GIF_L1;
             //Panel [Feed]
             document.getElementById('info_panel_feed_title').innerHTML = SVG_RSS+' FEED';
             document.getElementById('info_panel_community_feed').innerHTML = SVG_OPEN_LINK_SMALL+' View racing news';
@@ -148,6 +165,81 @@
             document.getElementById('info_panel_statuspage_title').innerHTML = SVG_BOT+' STATUS PAGE';
             //Panel [Settings]
             document.getElementById('info_panel_settings_title').innerHTML = SVG_SETTINGS+' SETTINGS';
+
+            const leaderboardsPreview = (fnMaps, fnPlayers, fnRecords) => {
+                let i = 0, output = '';
+                const cardMaxRecords = 6;
+                const mapLBCharLimit = 27;
+                const latestMaps = fnMaps.getLatest(40, mapLBCharLimit);
+                while(i < latestMaps.length) {
+                    const topRecords = fnRecords.getByMap(latestMaps[i].id);
+                    const mapTitle = '<a class="cell-title" href="'+getHrefMap(latestMaps[i].id, 0)+'">'+SVG_OPEN_LINK+'&nbsp;'+filterExplicitContent(latestMaps[i].title, latestMaps[i].censored_title).span+'</a>';
+                    let mapPreview = '<a href="'+getHrefMap(latestMaps[i].id, 0)+'">';
+                    if(latestMaps[i].preview_url) {
+                        mapPreview += '<img map_id="'+latestMaps[i].id+'" class="cell-preview" src="'+latestMaps[i].preview_url+'" onerror="setBackgroundAlt(this);"/></a>';
+                    }
+                    else {
+                        if(latestMaps[i].creator === 'null') {
+                            mapPreview += '<div class="cell-broken-preview"><span>'+SVG_WARN+'</span>&nbsp;<span>Deleted</span>&nbsp;<span>'+SVG_WARN+'</span></div>';
+                        }
+                        else {
+                            mapPreview += '<div class="cell-missing-preview"><span>No preview</span></div></a>';
+                        }
+                    }
+                    const mapRecords = '<span class="cell-records no-select">'+topRecords.length+' Record'+(topRecords.length !== 1 ? 's': '')+'</span>';
+
+                    let mapTopPlayer = '';
+                    for(let pl = 0; pl < cardMaxRecords; pl++) {
+                        mapTopPlayer += '<li class="cell-leaderboards-row '+getTableRowBGColor(pl)+'">';
+                        if(topRecords[pl]) {
+                            const formattedScore = formatScore(topRecords[pl].score);
+                            const playerName = fnPlayers.getNameById(topRecords[pl].player_id, false, 26-formattedScore.length);
+                            if(playerName.str) {
+                                mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
+                                                    '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;'+
+                                                    '<a href="'+getHrefPlayer(topRecords[pl].player_id)+'">'+playerName.span+'</a>'+
+                                                '</span>'+
+                                                '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
+                            }
+                            else {
+                                mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
+                                                    '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;[deleted]'+
+                                                '</span>'+
+                                                '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
+                            }
+                        }
+                        else {
+                            mapTopPlayer += '&nbsp;</li>';
+                        }
+                    }
+                    const mapPlayers = '<ul class="cell-players">'+mapTopPlayer+'</ul>';
+
+                    output += '<div class="cell-map">'+mapTitle+mapPreview+mapRecords+mapPlayers+'</div>';
+                    i++;
+                }
+
+                if(output !== '') {
+                    return '<div id="slideshow_wrapper" class="cell-group cell-group-scroll">'+output+'</div>'+'<div id="slideshow_wrapper_hidden" aria-hidden class="cell-group cell-group-scroll">'+output+'</div>';
+                }
+                return output;
+            };
+
+            async function changeSlideshowContent(event, toRuleset = 1) {
+                if(supportedRulesets.length > 1) {
+                    const rawMaps = await getIDBDataset(idbKeyMaps);
+                    const rawPlayers = await getIDBDataset(idbKeyPlayers, false, toRuleset);
+                    const rawRecords = await getIDBDataset(idbKeyRecords, false, toRuleset);
+                    const fnMaps = new Maps(rawMaps);
+                    const fnPlayers = new Players(rawPlayers);
+                    const fnRecords = new Records(rawRecords);
+                    event.setAttribute('onclick', 'changeSlideshowContent(this, '+(toRuleset === 0 ? 1 : 0)+')');
+                    event.innerHTML = SVG_UPDATE_SLIDESHOW+' '+supportedRulesets[toRuleset].name+' ruleset';
+                    event.title = supportedRulesets[toRuleset].description;
+                    document.getElementById('slideshow').innerHTML += leaderboardsPreview(fnMaps, fnPlayers, fnRecords);
+                    localStorage.setItem(lsiDefaultRuleset, toRuleset);
+                }
+                return;
+            }
 
             async function main() {
                 const rawMaps = await getIDBDataset(idbKeyMaps);
@@ -162,66 +254,18 @@
                 const fnRecords = new Records(rawRecords);
                 const fnActivity = new Activity(rawActivity);
                 const fnMetadata = new Metadata(rawMetadata);
+                let fnSecondaryModePlayers, fnSecondaryModeRecords, fnSecondaryModeActivity;
 
-                const leaderboardsPreview = () => {
-                    let i = 0, output = '';
-                    const cardMaxRecords = 6;
-                    const mapLBCharLimit = 27;
-                    const latestMaps = fnMaps.getLatest(40, mapLBCharLimit);
-                    while(i < latestMaps.length) {
-                        const topRecords = fnRecords.getByMap(latestMaps[i].id);
-                        const mapTitle = '<a class="cell-title" href="'+getHrefMap(latestMaps[i].id, 0)+'">'+SVG_OPEN_LINK+'&nbsp;'+filterExplicitContent(latestMaps[i].title, latestMaps[i].censored_title).span+'</a>';
-                        let mapPreview = '<a href="'+getHrefMap(latestMaps[i].id, 0)+'">';
-                        if(latestMaps[i].preview_url) {
-                            mapPreview += '<img map_id="'+latestMaps[i].id+'" class="cell-preview" src="'+latestMaps[i].preview_url+'" onerror="setBackgroundAlt(this);"/></a>';
-                        }
-                        else {
-                            if(latestMaps[i].creator === 'null') {
-                                mapPreview += '<div class="cell-broken-preview"><span>'+SVG_WARN+'</span>&nbsp;<span>Deleted</span>&nbsp;<span>'+SVG_WARN+'</span></div>';
-                            }
-                            else {
-                                mapPreview += '<div class="cell-missing-preview"><span>No preview</span></div></a>';
-                            }
-                        }
-                        const mapRecords = '<span class="cell-records no-select">'+topRecords.length+' Record'+(topRecords.length !== 1 ? 's': '')+'</span>';
+                if(supportedRulesets.length > 1) {
+                    const rawSecondaryModePlayers = await getIDBDataset(idbKeyPlayers, false, 1);
+                    fnSecondaryModePlayers = new Players(rawSecondaryModePlayers);
+                    const rawSecondaryModeRecords = await getIDBDataset(idbKeyRecords, false, 1);
+                    fnSecondaryModeRecords = new Records(rawSecondaryModeRecords);
+                    const rawSecondaryModeActivity = await getIDBDataset(idbKeyActivity, false, 1);
+                    fnSecondaryModeActivity = new Activity(rawSecondaryModeActivity);
+                }
 
-                        let mapTopPlayer = '';
-                        for(let pl = 0; pl < cardMaxRecords; pl++) {
-                            mapTopPlayer += '<li class="cell-leaderboards-row '+getTableRowBGColor(pl)+'">';
-                            if(topRecords[pl]) {
-                                const formattedScore = formatScore(topRecords[pl].score);
-                                const playerName = fnPlayers.getNameById(topRecords[pl].player_id, false, 26-formattedScore.length);
-                                if(playerName.str) {
-                                    mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
-                                                        '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;'+
-                                                        '<a href="'+getHrefPlayer(topRecords[pl].player_id)+'">'+playerName.span+'</a>'+
-                                                    '</span>'+
-                                                    '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
-                                }
-                                else {
-                                    mapTopPlayer += '<span class="cell-top-player-name-'+pl+'">'+
-                                                        '<span class="cell-top-player-position">#'+(pl+1)+'</span>&nbsp;[deleted]'+
-                                                    '</span>'+
-                                                    '<span class="cell-top-player-score-'+pl+'">'+formattedScore+'</span></li>';
-                                }
-                            }
-                            else {
-                                mapTopPlayer += '&nbsp;</li>';
-                            }
-                        }
-                        const mapPlayers = '<ul class="cell-players">'+mapTopPlayer+'</ul>';
-
-                        output += '<div class="cell-map">'+mapTitle+mapPreview+mapRecords+mapPlayers+'</div>';
-                        i++;
-                    }
-
-                    if(output !== '') {
-                        return '<div id="slideshow_wrapper" class="cell-group cell-group-scroll">'+output+'</div>'+'<div id="slideshow_wrapper_hidden" aria-hidden class="cell-group cell-group-scroll">'+output+'</div>';
-                    }
-                    return output;
-                };
-
-                const activityPreview = (recordLimit = 200) => {
+                const activityPreview = (fnActivity, fnPlayers, recordLimit = 200) => {
                     let output = new Array();
                     const activityObj = fnActivity.orderByDate();
                     for(let ai = 0; ai < activityObj.length; ai++) {
@@ -296,13 +340,34 @@
                 document.getElementById('slideshow_panel_controls_play').disabled = false;
                 document.getElementById('slideshow_panel_controls_play').innerHTML = SVG_PAUSE;
                 //Slideshow
-                document.getElementById('slideshow').innerHTML += leaderboardsPreview();
-                //Panel [Activity]
-                document.getElementById('info_panel_activity_title').innerHTML = SVG_ACTIVITY+' ACTIVITY';
-                document.getElementById('info_panel_activity_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
+                if(default_ruleset === 0) {
+                    document.getElementById('slideshow').innerHTML += leaderboardsPreview(fnMaps, fnPlayers, fnRecords);
+                }
+                else {
+                    document.getElementById('slideshow').innerHTML += leaderboardsPreview(fnMaps, fnSecondaryModePlayers, fnSecondaryModeRecords);
+                }
+                //Panel [Activity Left]
+                document.getElementById('info_panel_activity_left_title').innerHTML = SVG_ACTIVITY+' ACTIVITY'+(supportedRulesets.length > 1 ? ' ('+supportedRulesets[0].name.toUpperCase()+')' : '');
+                document.getElementById('info_panel_activity_left_title').title = supportedRulesets[0].description;
+                document.getElementById('info_panel_activity_left_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
                     '<button activityClassName="improved-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Improved rankings</button>'+
                     '<button activityClassName="dropped-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Dropped rankings</button>';
-                document.getElementById('info_panel_activity_data').innerHTML = activityPreview();
+                document.getElementById('info_panel_activity_left_data').innerHTML = activityPreview(fnActivity, fnPlayers);
+                if(supportedRulesets.length > 1) {
+                    //Panel [Activity Right]
+                    document.getElementById('info_panel_activity_right_title').innerHTML = SVG_ACTIVITY+' ACTIVITY ('+supportedRulesets[1].name.toUpperCase()+')';
+                    document.getElementById('info_panel_activity_right_title').title = supportedRulesets[1].description;
+                    document.getElementById('info_panel_activity_right_header_panel').innerHTML = '<button activityClassName="new-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Recently added</button>'+
+                        '<button activityClassName="improved-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Improved rankings</button>'+
+                        '<button activityClassName="dropped-ranking" onclick="displayActivity(this, true)" class="btn-text">'+SVG_TOGGLE_ENABLED+' Dropped rankings</button>';
+                    document.getElementById('info_panel_activity_right_data').innerHTML = activityPreview(fnSecondaryModeActivity, fnSecondaryModePlayers);
+                    document.getElementById('secondary_activity').classList.remove('hide-dom');
+                    //Move settings panel
+                    let settings_wrapper = document.getElementById('settings_wrapper');
+                    const settings_wrapper_html = settings_wrapper.outerHTML;
+                    settings_wrapper.remove();
+                    document.getElementsByClassName('rc-info-panels-left')[0].innerHTML += settings_wrapper_html;
+                }
                 //Panel [Feed]
                 document.getElementById('info_panel_feed_content').innerHTML = formatRSS(rawRSS, 20);
                 //Panel [Tracker]

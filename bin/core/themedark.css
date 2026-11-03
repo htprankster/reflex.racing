@@ -144,6 +144,17 @@ body {
     color: #49a6ff;
 }
 
+.rc-info-panel > .player-details-header-ruleset-title {
+    border-bottom: #09523a 2px solid;
+    background: #09523a;
+}
+
+.rc-info-panel:hover > .player-details-header-ruleset-title {
+    border-bottom: #0d7351 2px solid;
+    background: #0d7351;
+}
+
+.rc-info-panel .info-panel-details > button:hover > span,
 .rc-info-panel .info-panel-details > button:hover,
 .rc-info-panel .info-panel-details > a:hover {
     color: #7bc1ff;

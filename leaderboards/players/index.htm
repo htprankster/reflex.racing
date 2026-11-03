@@ -4,12 +4,12 @@
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="../../bin/core/fonts.css?v=0.1">
-        <link rel="stylesheet" href="../../bin/core/style.css?v=0.4">
-        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.1">
+        <link rel="stylesheet" href="../../bin/core/style.css?v=0.5">
+        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.2">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
-        <script src="../../bin/core/collection.js?v=0.3"></script>
-        <script src="../../bin/core/leaderboards.js?v=0.5"></script>
-        <script src="../../bin/core/content.js?v=0.1"></script>
+        <script src="../../bin/core/collection.js?v=0.4"></script>
+        <script src="../../bin/core/leaderboards.js?v=0.6"></script>
+        <script src="../../bin/core/content.js?v=0.2"></script>
         <title id="page_title">Reflex Racing > Players</title>
     </head>
     <body style="cursor:default">
@@ -109,6 +109,74 @@
                 </div>
             </div>
         </div>
+        <div id="multi_ruleset_display_player" class="hide-dom">
+            <div id="player_banner" class="rc-info-panels svg-info-large">
+                <div class="rc-info-panel">
+                    <div class="info-panel-card">
+                        <!-- <span id="player_banner_cmaps" class="player-preview-cmaps"></span> -->
+                        <span id="player_banner_country" class="player-preview-country"></span>
+                        <span id="player_banner_title" class="player-preview-title"></span>
+                        <img id="player_banner_avatar" class="player-preview" src="../../static/images/loading.gif" onerror="this.style.visibility='hidden'"/>
+                        <img id="player_banner_avatar_focus" class="player-preview-focus" src="" onerror="this.style.visibility='hidden'"/>
+                        <a id="steam_banner_profile_link" href="" title="Steam Profile" target="_blank"><img id="steam_banner_profile_logo" class="player-preview-steam" src="../../static/images/steam-logo.png"></a>
+                    </div>
+                </div>
+            </div>
+            <div id="wrapper_multi_cmaps" class="rc-info-panels svg-info-large hide-dom">
+                <div class="rc-info-panel">
+                    <div id="info_panel_multi_cmaps_header" class="info-panel-card info-panel-scroll-header">
+                        <span id="info_panel_multi_cmaps_title" class="info-panel-title">MAPS CREATED</span>
+                    </div>
+                    <table id="panel_multi_cmaps" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
+                </div>
+            </div>
+            <div id="wrapper_data">
+                <div id="player_details_left" class="rc-info-panels svg-info-xlarge">
+                    <div id="player_ldb_stats_left" class="rc-info-panel">
+                        <span id="player_details_header_left" class="player-details-header-ruleset-title">CASUAL RULESET</span>
+                        <div class="info-panel-card">
+                            <ul class="info-panel-4stat-details">
+                                <li><span id="info_panel_player_left_details_globalrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Global Rank</span></li>
+                                <li><span id="info_panel_player_left_details_avgrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Average Rank</span></li>
+                                <li><span id="info_panel_player_left_details_wrs" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">World Records</span></li>
+                                <li><span id="info_panel_player_left_details_records" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Records</span></li>
+                                <li><span id="info_panel_player_left_details_fav" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Racing preference</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="player_ldb_left" class="rc-info-panels svg-info-large">
+                        <div class="rc-info-panel">
+                            <div id="info_panel_ldb_left_header" class="info-panel-card info-panel-scroll-header">
+                                <span id="info_panel_ldb_left_title" class="info-panel-title">LEADERBOARDS</span>
+                            </div>
+                            <table id="panel_left_records" class="rc-leaderboards" cellspacing="0" cellpadding="0" onchange="this.scrollTop = 0"></table>
+                        </div>
+                    </div>
+                </div>
+                <div id="player_details_right" class="rc-info-panels svg-info-xlarge">
+                    <div id="player_ldb_stats_right" class="rc-info-panel">
+                        <span id="player_details_header_right" class="player-details-header-ruleset-title">COMPETITIVE RULESET</span>
+                        <div class="info-panel-card">
+                            <ul class="info-panel-4stat-details">
+                                <li><span id="info_panel_player_right_details_globalrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Global Rank</span></li>
+                                <li><span id="info_panel_player_right_details_avgrank" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Average Rank</span></li>
+                                <li><span id="info_panel_player_right_details_wrs" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">World Records</span></li>
+                                <li><span id="info_panel_player_right_details_records" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Records</span></li>
+                                <li><span id="info_panel_player_right_details_fav" class="info-panel-details svg-info-xlarge">Loading</span><span class="info-panel-title">Racing preference</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="player_ldb_right" class="rc-info-panels svg-info-large">
+                        <div class="rc-info-panel">
+                            <div id="info_panel_ldb_right_header" class="info-panel-card info-panel-scroll-header">
+                                <span id="info_panel_ldb_right_title" class="info-panel-title">LEADERBOARDS</span>
+                            </div>
+                            <table id="panel_right_records" class="rc-leaderboards" cellspacing="0" cellpadding="0" onchange="this.scrollTop = 0"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="footer" class="svg-info-xlarge"></div>
         <script>
             initIDB();
@@ -123,7 +191,9 @@
             document.getElementById('panel_records').innerHTML = LOADING_GIF_L2;
             document.getElementById('menu').innerHTML = pageHeader();
             const playerId = getKeyLDB(window.location.search.substr(1));
-            async function main() {
+            const directoryLevels = 1;
+
+            async function mainSingleRuleset() {
                 const rawMaps = await getIDBDataset(idbKeyMaps);
                 const rawPlayers = await getIDBDataset(idbKeyPlayers);
                 const rawRecords = await getIDBDataset(idbKeyRecords);
@@ -132,7 +202,6 @@
                 const fnMaps = new Maps(rawMaps);
                 const fnPlayers = new Players(rawPlayers);
                 const fnMetadata = new Metadata(rawMetadata);
-                const directoryLevels = 1;
                 const LAST_UPDATE = '<span class="info-panel-details svg-info-small" style="float:right">'+SVG_ACTIVITY+'&nbsp;'+fnMetadata.getLeaderboardsLastUpdate()+'</span>';
 
                 if(playerId) {
@@ -268,7 +337,126 @@
                 return;
             }
 
-            main();
+            async function mainMultiRuleset() {
+                document.getElementById('display_player').classList.add(hideDomClass);
+                document.getElementById('multi_ruleset_display_player').classList.remove(hideDomClass);
+                const rawMaps = await getIDBDataset(idbKeyMaps);
+                const rawLeftPlayers = await getIDBDataset(idbKeyPlayers);
+                const rawLeftRecords = await getIDBDataset(idbKeyRecords);
+                const rawRightPlayers = await getIDBDataset(idbKeyPlayers, false, 1);
+                const rawRightRecords = await getIDBDataset(idbKeyRecords, false, 1);
+                const rawMetadata = await getIDBDataset(idbKeyMetadata);
+
+                const fnMaps = new Maps(rawMaps);
+                const fnLeftPlayers = new Players(rawLeftPlayers);
+                const fnRightPlayers = new Players(rawRightPlayers);
+                const fnMetadata = new Metadata(rawMetadata);
+                const LAST_UPDATE = '<span class="info-panel-details svg-info-small" style="float:right">'+SVG_ACTIVITY+'&nbsp;'+fnMetadata.getLeaderboardsLastUpdate()+'</span>';
+
+                if(playerId) {
+                    const rawLeftActivity = await getIDBDataset(idbKeyActivity);
+                    const rawRightActivity = await getIDBDataset(idbKeyActivity, false, 1);
+                    const rawAlpha2Countries = await fetchDATA('https://raw.githubusercontent.com/stefangabos/world_countries/refs/heads/master/data/countries/en/world.json');
+                    
+                    const fnLeftRecords = new Records(rawLeftRecords);
+                    const fnRightRecords = new Records(rawRightRecords);
+                    const playerLeftObj = fnLeftPlayers.getEntryById(playerId);
+                    const playerRightObj = fnRightPlayers.getEntryById(playerId);
+                    const recordsLeftObj = fnLeftRecords.getByPlayer(playerId);
+                    const recordsRightObj = fnRightRecords.getByPlayer(playerId);
+
+                    document.getElementById('player_preview').classList.remove(hideDomClass);
+                    document.getElementById('player_details').classList.remove(hideDomClass);
+
+                    const playerName = (playerLeftObj.name || playerRightObj.name || '[deleted]');
+                    const playerNameSafe = (playerLeftObj.censored_name || playerRightObj.censored_name || '[deleted]');
+                    const countryCode = (playerLeftObj.country || playerRightObj.country || 'xx');
+                    const countryName = getCountryName(rawAlpha2Countries, countryCode);
+                    document.getElementById('page_title').innerHTML += ' > '+filterExplicitContent(playerName, playerNameSafe, true).str;
+                    document.getElementById('steam_profile_link').href = 'https://steamcommunity.com/profiles/'+playerId;
+
+                    document.getElementById('player_banner_title').innerHTML = filterExplicitContent(playerName, playerNameSafe).span;
+                    document.getElementById('player_banner_country').innerHTML = formatCountryFlag(countryCode, countryName)+'&nbsp;'+countryName;
+                    const playerAvatar = (playerLeftObj.avatar || playerRightObj.avatar);
+                    if(playerAvatar) {
+                        document.getElementById('player_banner_avatar').src = playerAvatar;
+                        document.getElementById('player_banner_avatar').style = 'visibility: visible !important';
+                        document.getElementById('player_banner_avatar_focus').src = playerAvatar;
+                        document.getElementById('player_banner_avatar_focus').style = 'visibility: visible !important';
+                    }
+                    else {
+                        document.getElementById('player_banner_avatar').style = 'visibility:hidden;';
+                    }
+
+                    const recordsLeft = playerLeftObj.records || fnLeftRecords.getByPlayer(playerId).length;
+                    const wrsLeft = playerLeftObj.wrs || fnLeftRecords.getByPlayer(playerId, true).length;
+                    document.getElementById('info_panel_player_left_details_globalrank').innerHTML = playerLeftObj.globalrank || 'TBD';
+                    document.getElementById('info_panel_player_left_details_avgrank').innerHTML = playerLeftObj.avgrank || 'TBD';
+                    document.getElementById('info_panel_player_left_details_wrs').innerHTML = wrsLeft;
+                    document.getElementById('info_panel_player_left_details_records').innerHTML = recordsLeft;
+                    //document.getElementById('info_panel_player_left_details_country').innerHTML = formatCountryFlag(playerLeftObj.country || 'xx', countryName);
+                    //document.getElementById('info_panel_player_left_details_country_label').innerHTML = countryName;
+                    document.getElementById('info_panel_player_left_details_fav').innerHTML = formatFavouriteMapType(playerLeftObj.fav, recordsLeft);
+
+                    const recordsRight = playerRightObj.records || fnRightRecords.getByPlayer(playerId).length;
+                    const wrsRight = playerRightObj.wrs || fnRightRecords.getByPlayer(playerId, true).length;
+                    document.getElementById('info_panel_player_right_details_globalrank').innerHTML = playerRightObj.globalrank || 'TBD';
+                    document.getElementById('info_panel_player_right_details_avgrank').innerHTML = playerRightObj.avgrank || 'TBD';
+                    document.getElementById('info_panel_player_right_details_wrs').innerHTML = wrsRight;
+                    document.getElementById('info_panel_player_right_details_records').innerHTML = recordsRight;
+                    //document.getElementById('info_panel_player_right_details_country').innerHTML = formatCountryFlag(playerRightObj.country || 'xx', countryName);
+                    //document.getElementById('info_panel_player_right_details_country_label').innerHTML = countryName;
+                    document.getElementById('info_panel_player_right_details_fav').innerHTML = formatFavouriteMapType(playerRightObj.fav, recordsRight);
+
+                    const mapsCreated = fnMaps.getByPlayer(playerId);
+                    if(mapsCreated.length > 0) {
+                        document.getElementById('info_panel_multi_cmaps_title').innerHTML = SVG_MAP+' MAPS CREATED'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                        document.getElementById('wrapper_multi_cmaps').classList.remove(hideDomClass);
+                        document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(mapsCreated[Math.floor(Math.random() * mapsCreated.length)].id || 0));
+                        generateTableLDB({maps: mapsCreated, players: rawLeftPlayers, records: rawLeftRecords}, 'panel_multi_cmaps', 'map', 'mapper:'+playerId, directoryLevels);
+                        window.addEventListener('load', adjustLDBHeaderOffset('info_panel_multi_cmaps_header', 'panel_multi_cmaps_thead'));
+                    }
+                    else if(recordsLeftObj.length > 0) {
+                        document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(recordsLeftObj[Math.floor(Math.random() * recordsLeftObj.length)].map_id));
+                    }
+                    else if(recordsRightObj.length > 0) {
+                        document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl(recordsRightObj[Math.floor(Math.random() * recordsRightObj.length)].map_id));
+                    }
+
+                    document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' RECORDS'+LAST_UPDATE+'<br>'+LABEL_LEFT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                    document.getElementById('info_panel_ldb_right_title').innerHTML = SVG_RECORD+' RECORDS'+LAST_UPDATE+'<br>'+LABEL_RIGHT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                    generateTableLDB({maps: rawMaps, players: rawLeftPlayers, records: rawLeftRecords, activity: rawLeftActivity}, 'panel_left_records', 'player', playerId, directoryLevels);
+                    window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_left_header', 'panel_left_records_thead'));
+                    generateTableLDB({maps: rawMaps, players: rawRightPlayers, records: rawRightRecords, activity: rawRightActivity}, 'panel_right_records', 'player', playerId, directoryLevels);
+                    window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_right_header', 'panel_right_records_thead'));
+                }
+                else {
+                    document.getElementById('player_showcase').classList.remove(hideDomClass);
+                    document.getElementById('player_showcase_title').innerHTML = SVG_STAR+' SHOWCASE';
+                    document.getElementById('player_banner').classList.add(hideDomClass);
+                    document.getElementById('player_ldb_stats_left').classList.add(hideDomClass);
+                    document.getElementById('player_ldb_stats_right').classList.add(hideDomClass);
+                    document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
+                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_LEADERBOARDS+' LEADERBOARDS<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                    document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' RECORDS'+LAST_UPDATE+'<br>'+LABEL_LEFT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                    document.getElementById('info_panel_ldb_right_title').innerHTML = SVG_RECORD+' RECORDS'+LAST_UPDATE+'<br>'+LABEL_RIGHT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                    generateTableLDB({maps: rawMaps, players: rawLeftPlayers, records: rawLeftRecords}, 'panel_left_records', 'player', 'all', directoryLevels);
+                    window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_left_header', 'panel_left_records_thead'));
+                    generateTableLDB({maps: rawMaps, players: rawRightPlayers, records: rawRightRecords}, 'panel_right_records', 'player', 'all', directoryLevels);
+                    window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_right_header', 'panel_right_records_thead'));
+                    showTopRacers(rawLeftPlayers);
+                    showMostRecords(rawLeftPlayers)
+                    showTopChallengers(rawLeftPlayers, rawMaps, rawLeftRecords);
+                }
+                return;
+            }
+
+            if(supportedRulesets.length > 1) {
+                mainMultiRuleset();
+            }
+            else {
+                mainSingleRuleset();
+            }
         </script>
         <noscript>
             <style>

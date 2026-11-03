@@ -86,6 +86,10 @@ body {
     color: #ffffff;
 }
 
+.player-preview-country {
+    color: #ffffff;
+}
+
 .rc-rss-panel {
     scrollbar-color: #e1e7ef transparent;
     background-color: #ffffff;
@@ -152,6 +156,17 @@ body {
     color: #198cf9;
 }
 
+.rc-info-panel > .player-details-header-ruleset-title {
+    border-bottom: #e5e5e5 2px solid;
+    background: #e5e5e5;
+}
+
+.rc-info-panel:hover > .player-details-header-ruleset-title {
+    border-bottom: #b8b8b8 2px solid;
+    background: #b8b8b8;
+}
+
+.rc-info-panel .info-panel-details > button:hover > span,
 .rc-info-panel .info-panel-details > button:hover,
 .rc-info-panel .info-panel-details > a:hover {
     color: #7bc1ff;

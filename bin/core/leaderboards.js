@@ -76,7 +76,12 @@ class Players {
         this.players = players;
     }
 
-    count() {
+    count(excludePlayers = []) {
+        if(excludePlayers.length > 0) {
+            for(let i = 0; i < excludePlayers.length; i++) {
+                break;
+            }
+        }
         return this.players.length;
     }
 
@@ -322,6 +327,12 @@ class Metadata {
     }
 }
 
+const localDatasets = false;
+const localDatasetsDir = {
+    base_dir: 'https://reflex.racing/static/json/reflex-racing-datasets',
+    leaderboards: 'https://reflex.racing/static/json/reflex-racing-datasets/leaderboards/latest',
+    rss: 'https://reflex.racing/static/json/reflex-racing-datasets/rss',
+};
 const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
 const idb = 'reflex-racing-htp';
 const idbTable = 'datasets';
@@ -333,6 +344,7 @@ const idbKeyPlayers = 'players';
 const idbKeyRecords = 'records';
 const idbKeyActivity = 'activity';
 const idbKeyMetadata = 'metadata';
+const lastUpdateKey = 'reflex-racing-ldb-lastupdate';
 const leaderboardsRecordLightClass = 'leaderboards-record-row-light';
 const leaderboardsRecordDarkClass = 'leaderboards-record-row-dark';
 const hideDomClass = 'hide-dom';
@@ -371,6 +383,30 @@ const difficultyList = [{ name: 'Training', title: 'Training maps are used to pr
                         { name: 'Low effort', title: 'This category includes a low amount of obstacles and/or a short distance to the finish line.', code: 'a' },
                         { name: 'Medium effort', title: 'Requires some degree of attention to keep the pace going.', code: 'b' },
                         { name: 'High effort', title: 'Maps of extended length require a high level of attention to keep the pace.', code: 'c' }];
+const rulesets = {
+    casual: {
+        name: 'Casual',
+        description: 'Casual ruleset allows for multiple time-resets without respawning.',
+        playersUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_players.json',
+        recordsUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_records.json',
+        activityUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_activity.json',
+        playersLocalPath: localDatasetsDir.leaderboards+'/ldb_players.json',
+        recordsLocalPath: localDatasetsDir.leaderboards+'/ldb_records.json',
+        activityLocalPath: localDatasetsDir.leaderboards+'/ldb_activity.json'
+    },
+    competitive: {
+        name: 'Competitive',
+        description: 'Competitive ruleset requires respawning to reset your timer.',
+        playersUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/24c52c7ed67fd841f9a8601a44d7e856483722e1/leaderboards/latest/ldb_players.json',
+        recordsUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/24c52c7ed67fd841f9a8601a44d7e856483722e1/leaderboards/latest/ldb_records.json',
+        activityUrl: 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/24c52c7ed67fd841f9a8601a44d7e856483722e1/leaderboards/latest/ldb_activity.json',
+        playersLocalPath: localDatasetsDir.leaderboards+'/ldb_players.json',
+        recordsLocalPath: localDatasetsDir.leaderboards+'/ldb_records.json',
+        activityLocalPath: localDatasetsDir.leaderboards+'/ldb_activity.json'
+    }
+};
+//const supportedRulesets = [rulesets.casual, rulesets.competitive];
+const supportedRulesets = [rulesets.casual];
 
 async function fetchDATA(url) {
     try {
@@ -710,7 +746,7 @@ function filterExplicitContent(strNSFW, strCensored, stripColor = false, charlim
     return {str: false, span: false};
 }
 
-function generateTableLDB(data = {maps: [], players: [], records: [], activity: []}, tableId, key = 'player', value = 'all', dirLevels = 0, maxRows = 300, version = 'latest', keepExistingHeader = false) {
+function generateTableLDB(data = {maps: [], players: [], records: [], activity: []}, tableId, key = 'player', value = 'all', dirLevels = 0, maxRows = 300, version = rulesets.casual.name, keepExistingHeader = false) {
     let dom = document.getElementById(tableId);
     let table = document.createElement('table');
 
@@ -764,7 +800,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
     const tableKeyPlayer = 'name';
 
     if(dom) {
-        let dHeader, dRecords;
+        let dHeader, dRecords, itemsLabel;
         if(isNaN(value)) {
             if(key === 'player') {
                 dHeader = [
@@ -776,6 +812,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                     {k: keyFavMapType, v: 'Favourite', class: 'table-header-column-favmaptype', sort: dataSortFavMapType, search: searchTypeDisable, idbtable: idbKeyPlayers, idbkey: keyFavMapType}
                     //{k: keyTags, v: 'Tags', class: 'table-header-column-tags', sort: dataSortTags}
                 ];
+                itemsLabel = 'player';
                 dRecords = fnPlayers.getAll();
             }
             else {
@@ -798,6 +835,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         {k: keyPublished, v: 'Date Published', class: 'table-header-column-published', sort: dataSortPublished, search: searchTypeDisable, idbtable: idbKeyMaps, idbkey: keyPublished},
                     ];
                 }
+                itemsLabel = 'map';
                 dRecords = fnMaps.getAll();
             }
         }
@@ -809,6 +847,7 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                 {k: keyTopSpeed, v: 'Top Speed {ups}', class: 'table-header-column-topspeed', sort: dataSortTopSpeed, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyTopSpeed},
                 {k: keyDistance, v: 'Distance', class: 'table-header-column-distance', sort: dataSortDistance, search: searchTypeDisable, idbtable: idbKeyRecords, idbkey: keyDistance}
             ];
+            itemsLabel = 'record';
             dRecords = (key === 'player' ? fnRecords.getByPlayer(value) : fnRecords.getByMap(value));
         }
 
@@ -878,11 +917,13 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                         aRank = (ACTIVITY.details.rank > 0 ? '<span class="cell-extra-rank span-special-info">['+Math.abs(ACTIVITY.details.rank)+'&uarr;]' :
                                 (ACTIVITY.details.rank < 0 ? '<span class="cell-extra-rank span-special-crit">['+Math.abs(ACTIVITY.details.rank)+'&darr;]' :
                                 '<span class="cell-extra-rank span-special-'+(ACTIVITY.details.score < 0 ? 'crit' : 'info')+'">[=]'))+'</span>&nbsp;';
-                        aScore = (ACTIVITY.details.score < 0 ? '<span class="cell-extra-rank span-special-crit">[&plus;' : '<span class="span-special-info">[&minus;')+formatScore(Math.abs(ACTIVITY.details.score))+']</span>&nbsp;';
-                        if(ACTIVITY.details.top_speed !== 0) {
+                        if(!isNaN(ACTIVITY.details.score)) {
+                            aScore = (ACTIVITY.details.score < 0 ? '<span class="cell-extra-rank span-special-crit">[&plus;' : '<span class="span-special-info">[&minus;')+formatScore(Math.abs(ACTIVITY.details.score))+']</span>&nbsp;';
+                        }
+                        if(!isNaN(ACTIVITY.details.top_speed) && ACTIVITY.details.top_speed !== 0) {
                             aTopSpeed = '<span class="span-special-value">['+(ACTIVITY.details.top_speed > 0 ? '&plus;' : '')+ACTIVITY.details.top_speed+']</span>&nbsp;';
                         }
-                        if(ACTIVITY.details.distance !== 0) {
+                        if(!isNaN(ACTIVITY.details.distance) && ACTIVITY.details.distance !== 0) {
                             aDistance = '<span class="span-special-value">['+(ACTIVITY.details.distance < 0 ? '&plus;' : '&minus;')+Math.abs(ACTIVITY.details.distance)+']</span>&nbsp;';
                         }
                     }
@@ -1098,7 +1139,8 @@ function generateTableLDB(data = {maps: [], players: [], records: [], activity: 
                     pageIndexSpan.innerHTML = indexPageLDB(1, Math.ceil((RECORDS.length-deletedRowsOffset)/maxRows));
                 }
                 else {
-                    pageNavDiv[0].innerHTML = '<span class="info-panel-details table-page-index svg-info-small">Showing '+(RECORDS.length-deletedRowsOffset)+' item'+((RECORDS.length-deletedRowsOffset) !== 1 ? 's' : '')+'</span>';
+                    //pageNavDiv[0].innerHTML = '<span class="info-panel-details table-page-index svg-info-small">Showing '+(RECORDS.length-deletedRowsOffset)+' item'+((RECORDS.length-deletedRowsOffset) !== 1 ? 's' : '')+'</span>';
+                    pageNavDiv[0].innerHTML = labelItemsCount(RECORDS.length-deletedRowsOffset, itemsLabel);
                 }
             }
         }
@@ -1446,18 +1488,19 @@ async function searchLDBRows(event) {
         return [];
     }
 
-    const rawMaps = await getIDBDataset(idbKeyMaps, true);
-    const rawPlayers = await getIDBDataset(idbKeyPlayers, true);
-    const rawRecords = await getIDBDataset(idbKeyRecords, true);
-    const rawActivity = await getIDBDataset(idbKeyActivity, true);
     const tableArgs = atob(event.getAttribute('b64args')).split(',');
+    const rIndex = supportedRulesets.indexOf(tableArgs[5]);
+    const rawMaps = await getIDBDataset(idbKeyMaps, true, rIndex);
+    const rawPlayers = await getIDBDataset(idbKeyPlayers, true, rIndex);
+    const rawRecords = await getIDBDataset(idbKeyRecords, true, rIndex);
+    const rawActivity = await getIDBDataset(idbKeyActivity, true, rIndex);
     const queryCreator = addQueryMapCreator(tableArgs);
     let matchingMaps = rawMaps;
     let matchingPlayers = rawPlayers;
     let matchingRecords = rawRecords;
     let matchingActivity = rawActivity;
     let queries = {};
-    const searchQueries = document.getElementsByClassName(tableHeaderSearchColumnClass);
+    const searchQueries = event.closest('thead').getElementsByClassName(tableHeaderSearchColumnClass);
     for(let i = 0; i < searchQueries.length; i++) {
         const table = searchQueries[i].getAttribute('idbtable');
         const key = searchQueries[i].getAttribute('idbkey');
@@ -1777,6 +1820,7 @@ function formatFavouriteMapType(favMapTypeObj, recordsCount, asLabel = false) {
 async function deleteIDB() {
     if(indexedDB) {
         const request = indexedDB.deleteDatabase(idb);
+        localStorage.removeItem(lastUpdateKey);
         request.onblocked = function(event) {
             console.log("Database in blocked state");
         };
@@ -1806,6 +1850,7 @@ async function initIDB() {
             objectStoreData.createIndex(idbIndex, [idbIndex], { unique: false });
             objectStoreData.transaction.oncomplete = (event) => {
                 console.log("Schema added to the database");
+                localStorage.removeItem(lastUpdateKey);
             };
         };
     }
@@ -1884,15 +1929,16 @@ async function setIDBDataset(index, dataset) {
     return;
 }
 
-async function getIDBDataset(key, idbOnly = false) {
+async function getIDBDataset(key, idbOnly = false, rulesetIndex = 0) {
     let latestVersion = idbOnly;
+    let keySuffix = (rulesetIndex > 0 ? '_'+supportedRulesets[rulesetIndex].name.toLowerCase() : '');
     const lastUpdateKey = 'reflex-racing-ldb-lastupdate';
     const lastLDBUpdate = localStorage.getItem(lastUpdateKey);
     let idbUpdates = {};
     if(lastLDBUpdate && !idbOnly) {
         idbUpdates = JSON.parse(lastLDBUpdate);
-        if(!isNaN(idbUpdates[key])) {
-            const lastUpdate = new Date(idbUpdates[key]);
+        if(!isNaN(idbUpdates[key+keySuffix])) {
+            const lastUpdate = new Date(idbUpdates[key+keySuffix]);
             const now = new Date();
             if(now.getHours() === lastUpdate.getHours()) {
                 latestVersion = true;
@@ -1914,36 +1960,67 @@ async function getIDBDataset(key, idbOnly = false) {
         let fetchURL = '';
         switch(key) {
             case idbKeyMaps:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_maps.json';
+                if(localDatasets) {
+                    fetchURL = localDatasetsDir.leaderboards+'/ldb_maps.json';
+                }
+                else {
+                    fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_maps.json';
+                }
                 break;
             case idbKeyPlayers:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_players.json';
+                fetchURL = supportedRulesets[rulesetIndex].playersUrl;
+                if(localDatasets) {
+                    fetchURL = supportedRulesets[rulesetIndex].playersLocalPath;
+                }
+                else {
+                    fetchURL = supportedRulesets[rulesetIndex].playersUrl;
+                }
                 break;
             case idbKeyRecords:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_records.json';
+                if(localDatasets) {
+                    fetchURL = supportedRulesets[rulesetIndex].recordsLocalPath;
+                }
+                else {
+                    fetchURL = supportedRulesets[rulesetIndex].recordsUrl;
+                }
                 break;
             case idbKeyActivity:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/leaderboards/latest/ldb_activity.json';
+                if(localDatasets) {
+                    fetchURL = supportedRulesets[rulesetIndex].activityLocalPath;
+                }
+                else {
+                    fetchURL = supportedRulesets[rulesetIndex].activityUrl;
+                }
                 break;
             case idbKeyRSS:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/rss/rss.json';
+                if(localDatasets) {
+                    fetchURL = localDatasetsDir.rss+'/rss.json';
+                }
+                else {
+                    fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/rss/rss.json';
+                }
                 break;
             case idbKeyMetadata:
-                fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/metadata.json';
+                if(localDatasets) {
+                    fetchURL = localDatasetsDir.base_dir+'/metadata.json';
+                }
+                else {
+                    fetchURL = 'https://raw.githubusercontent.com/htprankster/reflex-racing-datasets/refs/heads/main/metadata.json';
+                }
                 break;
             default: return false;
         }
 
         dataset = await fetchDATA(fetchURL);
         if(dataset.length > 0) {
-            setIDBDataset(key, dataset);
+            setIDBDataset(key+keySuffix, dataset);
             const d = new Date();
-            idbUpdates[key] = d.valueOf();
+            idbUpdates[key+keySuffix] = d.valueOf();
             localStorage.setItem(lastUpdateKey, JSON.stringify(idbUpdates));
             return dataset;
         }
     }
 
-    await getIndexedData(key).then(output => { dataset = output; });
+    await getIndexedData(key+keySuffix).then(output => { dataset = output; });
     return JSON.parse(dataset);
 }

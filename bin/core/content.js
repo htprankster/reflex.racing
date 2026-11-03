@@ -5,6 +5,7 @@ const settingsShortcuts = '<button onclick="changeAutoRefresh(this)">'+SVG_REPEA
 const footerLinks = [linkWebsiteRepo,linkWebsiteDiscord].join('&nbsp;');
 const lsiTheme = 'reflex-racing-theme';
 const lsiAutoRefresh = 'reflex-racing-autorefresh';
+const lsiDefaultRuleset = 'reflex-racing-default-ruleset';
 let autoRefreshTimeout;
 
 function autoRefresh() {
@@ -104,7 +105,7 @@ function displayRSS(event, hide) {
 function displayActivity(event, hide) {
     let i = 0, j = 0;
     const activityClassName = event.getAttribute('activityClassName');
-    let dom = document.getElementsByClassName(activityClassName);
+    let dom = event.parentNode.parentNode.parentNode.getElementsByClassName(activityClassName);
     if(dom.length > 0) {
         let activityList = dom[0].parentNode.children;
         const activityFilterLabel = event.textContent;
@@ -191,6 +192,14 @@ function formatRSS(rssObj, limit, headlinesOnly = false) {
 
 function feedNameToClass(name) {
     return name.toLowerCase().replaceAll(' ','-').trim()+'-feed';
+}
+
+function labelItemsCount(items, context = 'item', textOnly = false) {
+    const labelText = (items === 0 ? 'No '+context+'s available' : 'Showing '+items+' '+context+(items > 1 ? 's' : ''));
+    if(textOnly) {
+        return labelText;
+    }
+    return '<span class="info-panel-details table-page-index svg-info-small">'+labelText+'</span>';
 }
 
 function changeStyleCSS(event = false) {

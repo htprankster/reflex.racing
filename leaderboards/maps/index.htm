@@ -4,12 +4,12 @@
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
         <link rel="stylesheet" href="../../bin/core/fonts.css?v=0.2">
-        <link rel="stylesheet" href="../../bin/core/style.css?v=0.4">
-        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.1">
+        <link rel="stylesheet" href="../../bin/core/style.css?v=0.5">
+        <link id="theme" rel="stylesheet" href="../../bin/core/themedark.css?v=0.2">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css">
-        <script src="../../bin/core/collection.js?v=0.3"></script>
-        <script src="../../bin/core/leaderboards.js?v=0.5"></script>
-        <script src="../../bin/core/content.js?v=0.1"></script>
+        <script src="../../bin/core/collection.js?v=0.4"></script>
+        <script src="../../bin/core/leaderboards.js?v=0.6"></script>
+        <script src="../../bin/core/content.js?v=0.2"></script>
         <title id="page_title">Reflex Racing > Maps</title>
     </head>
     <body style="cursor:default">
@@ -80,12 +80,22 @@
                     </div>
                 </div>
             </div>
-            <div class="rc-info-panels svg-info-large">
-                <div class="rc-info-panel">
-                    <div id="info_panel_ldb_header" class="info-panel-card info-panel-scroll-header">
-                        <span id="info_panel_ldb_title" class="info-panel-title">LEADERBOARD</span>
+            <div id="wrapper_data">
+                <div id="maps_ldb_left_panel" class="rc-info-panels svg-info-large">
+                    <div class="rc-info-panel">
+                        <div id="info_panel_ldb_left_header" class="info-panel-card info-panel-scroll-header">
+                            <span id="info_panel_ldb_left_title" class="info-panel-title">LEADERBOARD</span>
+                        </div>
+                        <table id="panel_left_records" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
                     </div>
-                    <table id="panel_records" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
+                </div>
+                <div id="maps_ldb_right_panel" class="rc-info-panels svg-info-large hide-dom">
+                    <div class="rc-info-panel">
+                        <div id="info_panel_ldb_right_header" class="info-panel-card info-panel-scroll-header">
+                            <span id="info_panel_ldb_right_title" class="info-panel-title">LEADERBOARD</span>
+                        </div>
+                        <table id="panel_right_records" class="rc-leaderboards" cellspacing="0" cellpadding="0"></table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,10 +110,13 @@
             changeAutoRefresh();
             document.getElementById('menu').innerHTML = pageHeader();
             document.getElementById('map_preview').style = 'width:auto;justify-self:center;'
-            document.getElementById('panel_records').innerHTML = LOADING_GIF_L2;
+            document.getElementById('panel_left_records').innerHTML = LOADING_GIF_L2;
             document.getElementById('footer').innerHTML = footerLinks;
             const mapId = getKeyLDB(window.location.search.substr(1));
-            async function main() {
+            const maxRowsXPage = 300;
+            const directoryLevels = 1;
+
+            async function mainSingleRuleset() {
                 const rawMaps = await getIDBDataset(idbKeyMaps);
                 const rawPlayers = await getIDBDataset(idbKeyPlayers);
                 const rawRecords = await getIDBDataset(idbKeyRecords);
@@ -114,10 +127,8 @@
                 const fnPlayers = new Players(rawPlayers);
                 const fnRecords = new Records(rawRecords);
                 const fnMetadata = new Metadata(rawMetadata);
-
-                const maxRowsXPage = 300;
-                const directoryLevels = 1;
                 const LAST_UPDATE = '<span class="info-panel-details svg-info-small" style="float:right">'+SVG_ACTIVITY+'&nbsp;'+fnMetadata.getLeaderboardsLastUpdate()+'</span>';
+                document.getElementById('maps_ldb_left_panel').style.width = '60vw';
 
                 if(mapId) {
                     const mapObj = fnMaps.getEntryById(mapId);
@@ -167,22 +178,115 @@
                             document.getElementById('info_panel_map_details_creator').style.cursor = 'pointer';
                         }
                         document.getElementById('steam_workshop_link').href = 'http://steamcommunity.com/sharedfiles/filedetails/?id='+mapId;
-                        //document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
-                        document.getElementById('info_panel_ldb_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
-                        generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', mapId, directoryLevels, maxRowsXPage);
+                        //document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                        document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                        generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_left_records', 'map', mapId, directoryLevels, maxRowsXPage);
                     }
                 }
                 else {
                     document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
-                    //document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+BUTTON_TABLE_SHOW_MORE;
-                    document.getElementById('info_panel_ldb_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
+                    //document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+BUTTON_TABLE_SHOW_MORE;
+                    document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+LABEL_LEGACY_VERSION+BUTTON_TABLE_PAGE_NAV;
                     document.getElementById('map_details').classList.add(hideDomClass);
                     document.getElementById('map_showcase').classList.remove(hideDomClass);
-                    generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords, activity: rawActivity}, 'panel_records', 'map', 'all', directoryLevels, maxRowsXPage);
+                    document.getElementById('map_showcase_title').innerHTML = SVG_STAR+' SHOWCASE';
+                    generateTableLDB({maps: rawMaps, players: rawPlayers, records: rawRecords}, 'panel_left_records', 'map', 'all', directoryLevels, maxRowsXPage);
                     showPopularMaps(rawRecords, rawMaps, rawPlayers);
                     showMostUploads(rawMaps, rawPlayers);
                 }
-                window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_header', 'panel_records_thead'));
+                window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_left_header', 'panel_left_records_thead'));
+            }
+
+            async function mainMultiRuleset() {
+                const rawMaps = await getIDBDataset(idbKeyMaps);
+                const rawLeftPlayers = await getIDBDataset(idbKeyPlayers);
+                const rawRightPlayers = await getIDBDataset(idbKeyPlayers, false, 1);
+                const rawLeftRecords = await getIDBDataset(idbKeyRecords);
+                const rawRightRecords = await getIDBDataset(idbKeyRecords, false, 1);
+                const rawLeftActivity = await getIDBDataset(idbKeyActivity);
+                const rawRightActivity = await getIDBDataset(idbKeyActivity, false, 1);
+                const rawMetadata = await getIDBDataset(idbKeyMetadata);
+
+                const fnMaps = new Maps(rawMaps);
+                const fnLeftPlayers = new Players(rawLeftPlayers);
+                const fnRightPlayers = new Players(rawRightPlayers);
+                const fnLeftRecords = new Records(rawLeftRecords);
+                const fnRightRecords = new Records(rawRightRecords);
+                const fnMetadata = new Metadata(rawMetadata);
+                const LAST_UPDATE = '<span class="info-panel-details svg-info-small" style="float:right">'+SVG_ACTIVITY+'&nbsp;'+fnMetadata.getLeaderboardsLastUpdate()+'</span>';
+
+                if(mapId) {
+                    const mapObj = fnMaps.getEntryById(mapId);
+                    if(mapObj.title) {
+                        const mapTitle = filterExplicitContent(mapObj.title, mapObj.censored_title);
+                        document.getElementById('page_title').innerHTML += ' > '+mapTitle.str;
+                        document.getElementById('background').innerHTML = getMapPreview(mapObj.preview_url);
+
+                        document.getElementById('maps_ldb_right_panel').classList.remove(hideDomClass);
+                        document.getElementById('map_preview').src = mapObj.preview_url;
+                        document.getElementById('map_preview').style = 'visibility: visible !important';
+                        document.getElementById('map_preview_title').innerHTML = mapTitle.span;
+                        document.getElementById('info_panel_details_title').innerHTML = SVG_INFO+' DETAILS'+'<br><span id="info_panel_map_details_lastcheck" title="Last check: '+fnMetadata.getLeaderboardsLastUpdate()+'" style="cursor:pointer" class="info-panel-details svg-info-small">'+SVG_ACTIVITY+' '+fnMetadata.getLeaderboardsLastUpdate('compact')+'</span>';
+                        document.getElementById('info_panel_map_details_records').innerHTML = fnLeftRecords.getByMap(mapId).length + fnRightRecords.getByMap(mapId).length;
+                        document.getElementById('info_panel_map_details_type').innerHTML = formatMapTypeLine((mapObj.custom ? mapObj.custom.type : '?'));
+                        document.getElementById('info_panel_map_details_difficulty').innerHTML = formatMapDifficultyLine((mapObj.custom ? mapObj.custom.difficulty : '?'));
+                        if(!isNaN(mapObj.creator)) {
+                            document.getElementById('info_panel_map_details_filesize').innerHTML = convertBytes(mapObj.file_size, false);
+                            document.getElementById('info_panel_map_details_posted').innerHTML = convertTime(mapObj.time_created, 'compact');
+                            document.getElementById('info_panel_map_details_posted').title = 'Published: '+convertTime(mapObj.time_created);
+                            document.getElementById('info_panel_map_details_posted').style.cursor = 'pointer';
+                            if(mapObj.time_created !== mapObj.time_updated) {
+                                document.getElementById('info_panel_map_details_updated').parentNode.classList.remove(hideDomClass);
+                                document.getElementById('info_panel_map_details_updated').innerHTML = convertTime(mapObj.time_updated, 'compact');
+                                document.getElementById('info_panel_map_details_updated').title = 'Last updated: '+convertTime(mapObj.time_updated);
+                                document.getElementById('info_panel_map_details_updated').style.cursor = 'pointer';
+                            }
+                            const mapper = (fnLeftPlayers.getNameById(mapObj.creator, true) || fnRightPlayers.getNameById(mapObj.creator, true));
+                            if(mapper.str) {
+                                document.getElementById('info_panel_map_details_creator').innerHTML = '<a href="'+getHrefPlayer(mapObj.creator, 1)+'">'+mapper.span+' '+SVG_OPEN_LINK+'</a>';
+                            }
+                            else {
+                                document.getElementById('info_panel_map_details_creator').innerHTML = '[deleted]';
+                            }
+                        }
+                        else {
+                            const dataShiftLabel = 'Data shift detected! Please wait for the next refresh.';
+                            document.getElementById('info_panel_map_details_filesize').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_filesize').title = dataShiftLabel;
+                            document.getElementById('info_panel_map_details_filesize').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_posted').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_posted').title = dataShiftLabel;
+                            document.getElementById('info_panel_map_details_posted').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_updated').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_updated').title = dataShiftLabel;
+                            document.getElementById('info_panel_map_details_updated').style.cursor = 'pointer';
+                            document.getElementById('info_panel_map_details_creator').innerHTML = 'TBD';
+                            document.getElementById('info_panel_map_details_creator').title = dataShiftLabel;
+                            document.getElementById('info_panel_map_details_creator').style.cursor = 'pointer';
+                        }
+                        document.getElementById('steam_workshop_link').href = 'http://steamcommunity.com/sharedfiles/filedetails/?id='+mapId;
+                        //document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEFT_RULESET+BUTTON_TABLE_SHOW_MORE_RIGHT;
+                        document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_LEFT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                        generateTableLDB({maps: rawMaps, players: rawLeftPlayers, records: rawLeftRecords, activity: rawLeftActivity}, 'panel_left_records', 'map', mapId, directoryLevels, maxRowsXPage);
+                        document.getElementById('info_panel_ldb_right_title').innerHTML = SVG_RECORD+' LEADERBOARD'+LAST_UPDATE+'<br>'+LABEL_RIGHT_RULESET+BUTTON_TABLE_PAGE_NAV;
+                        generateTableLDB({maps: rawMaps, players: rawRightPlayers, records: rawRightRecords, activity: rawRightActivity}, 'panel_right_records', 'map', mapId, directoryLevels, maxRowsXPage);
+                    }
+                }
+                else {
+                    const rawAllPlayers = rawLeftPlayers.concat(rawRightPlayers);
+                    const rawAllRecords = rawLeftRecords.concat(rawRightRecords);
+                    document.getElementById('background').innerHTML = getMapPreview(fnMaps.getPreviewUrl());
+                    document.getElementById('maps_ldb_left_panel').style.width = '60vw';
+                    //document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+BUTTON_TABLE_SHOW_MORE;
+                    document.getElementById('info_panel_ldb_left_title').innerHTML = SVG_MAP+' MAPS'+LAST_UPDATE+'<br>'+LABEL_ALL_RULESET+BUTTON_TABLE_PAGE_NAV;
+                    document.getElementById('map_details').classList.add(hideDomClass);
+                    document.getElementById('map_showcase').classList.remove(hideDomClass);
+                    document.getElementById('map_showcase_title').innerHTML = SVG_STAR+' SHOWCASE';
+                    generateTableLDB({maps: rawMaps, players: rawAllPlayers, records: rawAllRecords}, 'panel_left_records', 'map', 'all', directoryLevels, maxRowsXPage);
+                    showPopularMaps(rawLeftRecords, rawMaps, rawLeftPlayers);
+                    showMostUploads(rawMaps, rawAllPlayers);
+                }
+                window.addEventListener('load', adjustLDBHeaderOffset('info_panel_ldb_left_header', 'panel_left_records_thead'));
             }
 
             async function showPopularMaps(rawRecordsObj, rawMapsObj, rawPlayersObj) {
@@ -221,21 +325,31 @@
                     }
                 }
 
+                let m = 0;
                 let mostUploads = players.sort((a,b) => a.published - b.published).reverse();
-                for(let m = 0; m < mostUploads.length; m++) {
-                    if(mostUploads[m].published > 0) {
+                for(let k = 0; k < mostUploads.length; k++) {
+                    if(mostUploads[k].published > 0) {
                         let domMU = document.getElementById('info_panel_mostuploads_'+(m+1)+'place');
                         if(domMU) {
-                            const uploader = filterExplicitContent(mostUploads[m].name, mostUploads[m].censored_name, true, 20);
-                            domMU.innerHTML = '<a href="'+getHrefPlayer(mostUploads[m].id, 1)+'"><img class="player-mid-preview" src="'+mostUploads[m].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+uploader.span+'</a>';
-                            domMU.parentNode.innerHTML += '<span class="info-panel-title">'+mostUploads[m].published+' maps</span>';
+                            const uploader = filterExplicitContent(mostUploads[k].name, mostUploads[k].censored_name, true, 20);
+                            domMU.innerHTML = '<a href="'+getHrefPlayer(mostUploads[k].id, 1)+'"><img class="player-mid-preview" src="'+mostUploads[k].avatar+'" onerror="this.style.visibility=\'hidden\'"/>'+uploader.span+'</a>';
+                            domMU.parentNode.innerHTML += '<span class="info-panel-title">'+mostUploads[k].published+' maps</span>';
+                            m++;
+                        }
+                        else if(m > 0) {
+                            break;
                         }
                     }
                 }
                 return;
             }
 
-            main();
+            if(supportedRulesets.length > 1) {
+                mainMultiRuleset();
+            }
+            else {
+                mainSingleRuleset();
+            }
         </script>
         <noscript>
             <style>
