@@ -12,7 +12,7 @@ function autoRefresh() {
     const now = new Date();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
-    const refreshIntervals = [10, 30, 50, 70];
+    const refreshIntervals = [15, 35, 55, 75];
     let remainingMinutes = 20;
     for(let i = 0; i < refreshIntervals.length; i++) {
         if(minutes < refreshIntervals[i]) {

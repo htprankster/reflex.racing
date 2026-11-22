@@ -1944,7 +1944,7 @@ async function getIDBDataset(key, idbOnly = false, rulesetIndex = 0) {
                 latestVersion = true;
                 const currentMinutes = now.getMinutes();
                 const prevMinutes = lastUpdate.getMinutes();
-                const refreshIntervals = [10, 30, 50, 70];
+                const refreshIntervals = [15, 35, 55, 75];
                 for(let i = 0; i < refreshIntervals.length; i++) {
                     if(prevMinutes < refreshIntervals[i] && currentMinutes >= refreshIntervals[i]) {
                         latestVersion = false;
